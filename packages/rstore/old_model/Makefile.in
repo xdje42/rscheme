@@ -1,4 +1,7 @@
 
+srcdir=@srcdir@
+VPATH=@srcdir@
+
 default:: all
 
 srcdir=@srcdir@

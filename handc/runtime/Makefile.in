@@ -11,6 +11,14 @@
 # Purpose: Makefile for core-most runtime library material
 #-------------------------------------------------------------------------#
 
+top_srcdir=@top_srcdir@
+srcdir=@top_srcdir@/handc/runtime
+VPATH=@top_srcdir@/handc/runtime
+
+# Hardcode the path to the top build directory for consistency with module
+# Makefiles.
+top_builddir=../..
+
 CFILES=allocns.c smemory.c regs.c interim.c \
 	vinsns.c entry.c _debug.c \
 	stakcach.c stack.c linkage.c intrs.c init.c \
@@ -18,4 +26,9 @@ CFILES=allocns.c smemory.c regs.c interim.c \
 	basemath.c classes.c strings.c function.c dynlink.c \
 	dequeue.c timeprof.c fluid.c profile.c applyg.c
 PRODUCT=runtime.o
-include ../postambl.mak
+
+include $(top_builddir)/postambl.mak
+
+distclean::
+	@# These are symlinks created by configure.
+	rm -f dynlink.c osglue.c

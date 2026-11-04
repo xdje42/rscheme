@@ -10,7 +10,7 @@
  |
  `------------------------------------------------------------------------|#
 
-((low-scheme "$dist/lowscm" "$install/resource/modules")
+((low-scheme "$dist/modules/lowscm" "$install/resource/modules")
  (open primops corelib *scheme*)
  (require-c-header "<ctype.h>")
  (files equality lists vectors grokking append mapping finding chars)

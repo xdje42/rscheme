@@ -39,10 +39,7 @@ AC_CHECK_LIB(z,compress,[LIBS="-lz $LIBS"
 zipper_files="$zipper_files zipzlib.c"
 other_libs="$other_libs \"z\""])
 
-if test -z "$zipper_files"
-then echo "compression methods are from... (no files)"
-else echo "compression methods are from... $zipper_files"
-fi
+echo "compression methods are from... $zipper_files"
 
 dnl -------------------------------------------------------------------------
 dnl  Generate the "ziplist.ci" file, which contains the master table
@@ -61,7 +58,7 @@ EOF
 tmp=ziplist.tmp
 
 for f in $zipper_files
-do awk '$1 == "/*|" && $2 == "define-zip-algorithm" { print $3, $4 }' $f \
+do awk '$1 == "/*|" && $2 == "define-zip-algorithm" { print $3, $4 }' $srcdir/$f \
    | while read name struct 
    do echo $f $name $struct 
    done

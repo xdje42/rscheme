@@ -9,7 +9,17 @@
 # Build:   %b%
 #
 
+top_srcdir=@top_srcdir@
+srcdir=@top_srcdir@/handc/heapi
+VPATH=@top_srcdir@/handc/heapi
+
+top_builddir=@top_builddir@
+
 CFILES=loadimag.c savewrit.c savetrav.c saveq.c mapf.c
 PRODUCT=heapi.o
 
-include ../postambl.mak
+include $(top_builddir)/postambl.mak
+
+distclean::
+	@# This is a symlink created by configure.
+	rm -f mapf.c

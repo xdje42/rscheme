@@ -10,6 +10,13 @@
 #
 # Purpose: 
 
+top_srcdir=@top_srcdir@
+srcdir=@top_srcdir@/handc/unstub
+VPATH=@top_srcdir@/handc/unstub
+
+top_builddir=@top_builddir@
+
 CFILES=unstub.c
 PRODUCT=unstb.o
-include ../postambl.mak
+
+include $(top_builddir)/postambl.mak

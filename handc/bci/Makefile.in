@@ -8,11 +8,16 @@
 # Date:    %G% %U%
 # Build:   %b%
 #
-#
 
+top_srcdir=@top_srcdir@
+srcdir=@top_srcdir@/handc/bci
+VPATH=@top_srcdir@/handc/bci
+
+top_builddir=@top_builddir@
 
 CFILES=bcinterp.c
 PRODUCT=bci.o
-include ../postambl.mak
+
+include $(top_builddir)/postambl.mak
 
 bcinterp.o: bcinterp.c bcfrags.ci

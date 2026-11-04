@@ -13,7 +13,7 @@
  | Purpose:          Module-control file for hacker's module
  `------------------------------------------------------------------------|#
 
-((hacks "$dist/hacks" "$install/resource/modules")
+((hacks "$dist/modules/hacks" "$install/resource/modules")
  (open primops *scheme* iolib low-scheme objsys mathlib tables corelib)
  (open codegen mlink repl paths)
 

@@ -1,0 +1,476 @@
+# Top level Rscheme Makefile
+
+RSCHEME_VERSION=@RSCHEME_VERSION@
+RSCHEME_BUILD=@RSCHEME_BUILD@
+
+SHELL=/bin/sh
+
+abs_top_srcdir=@abs_top_srcdir@
+abs_top_builddir=@abs_top_builddir@
+
+top_srcdir=@top_srcdir@
+srcdir=@srcdir@
+VPATH=@srcdir@
+
+top_builddir=@top_builddir@
+
+# This is the value of --prefix and doesn't change.
+FINAL_INSTALL_DIR=@prefix@
+# This defaults to FINAL_INSTALL_DIR but changes to $top_builddir/install
+# when using the staging install tree.
+INSTALL_DIR=$(FINAL_INSTALL_DIR)
+# This is where we stage the install. Build artifacts are placed here, and then
+# the entire tree is copied to FINAL_INSTALL_DIR.
+STAGING_INSTALL_DIR=./install
+
+# Either "modules" or "stage0".
+# This is "stage0" when building stage0 to bootstrap with.
+ENABLE_STAGE0_BUILD=@ENABLE_STAGE0_BUILD@
+MODULES_SUBDIR=@MODULES_SUBDIR@
+SYSTEM_BAS=@SYSTEM_BAS@
+
+# If bootstrapping, use the just built RS.
+ENABLE_BOOTSTRAP=@ENABLE_BOOTSTRAP@
+# This is either the system RS or the stage0 RS if we're bootstrapping.
+RS=@RS@
+
+MODULES_DIR=$(STAGING_INSTALL_DIR)/resource/modules
+
+# These directories are configured with AC_CONFIG_SUBDIRS.
+CONFIG_SUBDIRS=@subdirs@
+
+#
+#  can set `RSC_FLAGS=-ccode' to build nearly entire system to C
+#  instead of bytecodes
+#
+RSC_FLAGS=-pragma function-definitions-are-const \
+	  -pragma slots-are-sealed
+
+#
+#  `RSC_FLAGS2=-ccode' can be used to compile just certain modules to C
+#  (ie: corelib lowscm objsys iolib highscm compiler codegen)
+#  (by default -- most builds are development builds -- don't even set that)
+#
+#RSC_FLAGS2=-ccode
+RSC_FLAGS2=
+
+# There are two versions of rsc+rsc.img:
+# 1) The version used for compiling the tree: $(RSC_FOR_BUILD)
+# 2) The one we install in FINAL_INSTALL_DIR: $(RSC).
+
+# This is version 1: Used for compiling the tree.
+RSC_FOR_BUILD=for-build/rsc
+RSC_IMG_FOR_BUILD=for-build/rsc.img
+
+# This is version 2: Installed in FINAL_INSTALL_DIR.
+RSC=$(STAGING_INSTALL_DIR)/bin/rsc
+RSC_IMG=$(STAGING_INSTALL_DIR)/resource/compiler/rsc.img
+
+RSC_F=$(RSC_FOR_BUILD) $(RSC_FLAGS)
+
+AR=@AR@
+RANLIB=@RANLIB@
+
+INSTALL=$(top_srcdir)/install-sh
+
+MODULES=$(MODULES_DIR)/primops.mif \
+	$(MODULES_DIR)/precore.mif \
+	$(MODULES_DIR)/corelib.mif \
+	$(MODULES_DIR)/low_scheme.mif \
+	$(MODULES_DIR)/objsys.mif \
+	$(MODULES_DIR)/paths.mif \
+	$(MODULES_DIR)/mathlib.mif \
+	$(MODULES_DIR)/tables.mif \
+	$(MODULES_DIR)/earley.mif \
+	$(MODULES_DIR)/iolib.mif \
+	$(MODULES_DIR)/high_scheme.mif \
+	$(MODULES_DIR)/start.mif \
+	$(MODULES_DIR)/sort.mif \
+	$(MODULES_DIR)/imageio.mif \
+	$(MODULES_DIR)/editinp.mif \
+	$(MODULES_DIR)/mlink.mif \
+	$(MODULES_DIR)/compiler.mif \
+	$(MODULES_DIR)/codegen.mif \
+	$(MODULES_DIR)/repl.mif \
+	$(MODULES_DIR)/hacks.mif \
+	$(MODULES_DIR)/regex.mif \
+	$(MODULES_DIR)/debugger.mif \
+	$(MODULES_DIR)/threads.mif
+
+# librs.a is staged here before being installed in FINAL_INSTALL_DIR.
+LIB_RS = $(STAGING_INSTALL_DIR)/lib/librs.a
+
+###############################################################################
+
+.PHONY: all base-system subproj-includes base-lib shell install
+.PHONY: init-base-system rsc-for-build modules base-image rsc
+
+# "all" is the canonical default.
+# This builds rs and all its dependencies.
+all:: base-system subproj-includes base-lib shell
+
+# The base system: build compiler + compiled modules + base image.
+# This is enough to create stage0 sources.
+base-system:: init-base-system rsc-for-build modules base-image
+
+init-base-system::
+	mkdir -p $(STAGING_INSTALL_DIR)/include
+	rm -f $(STAGING_INSTALL_DIR)/include/rscheme.h
+	cp $(srcdir)/handc/install/include/rscheme.h $(STAGING_INSTALL_DIR)/include
+
+rsc-for-build:: $(RSC_FOR_BUILD) $(RSC_IMG_FOR_BUILD)
+modules:: $(MODULES)
+base-image:: $(SYSTEM_BAS)
+
+buildcfg.scm: compiler/mkcfg
+	RS=$(RS) $(srcdir)/compiler/mkcfg \
+	  $(top_srcdir) $(top_builddir) $(STAGING_INSTALL_DIR) \
+	  "$(RSCHEME_VERSION)" "$(RSCHEME_BUILD)" > $@
+
+$(RSC_FOR_BUILD): compiler/mkrsc
+	mkdir -p for-build
+	RS=$(RS) $(srcdir)/compiler/mkrsc \
+	  for-build $(STAGING_INSTALL_DIR) > $@
+	chmod +x $@
+
+$(RSC_IMG_FOR_BUILD): compiler/mkrscimg buildcfg.scm
+	mkdir -p for-build
+	RS=$(RS) $(srcdir)/compiler/mkrscimg \
+	  $(srcdir)/compiler for-build buildcfg.scm
+
+rsc:: $(RSC) $(RSC_IMG)
+
+# FIXME: FINAL_INSTALL_DIR for dist_{src,build}_dir feels wrong.
+cfg-for-rsc.scm: compiler/mkcfg
+	RS=$(STAGING_INSTALL_DIR)/bin/rs $(srcdir)/compiler/mkcfg \
+	  $(FINAL_INSTALL_DIR) $(FINAL_INSTALL_DIR) $(FINAL_INSTALL_DIR) \
+	  "$(RSCHEME_VERSION)" "$(RSCHEME_BUILD)" > $@
+
+$(RSC): compiler/mkrsc
+	mkdir -p $(STAGING_INSTALL_DIR)/bin
+	RS=$(FINAL_INSTALL_DIR)/bin/rs $(top_srcdir)/compiler/mkrsc \
+	  $(FINAL_INSTALL_DIR)/resource/compiler \
+	  $(FINAL_INSTALL_DIR) > $@
+	chmod +x $@
+	echo $(CFLAGS) > $(STAGING_INSTALL_DIR)/resource/compiler/cflags
+
+$(RSC_IMG):: compiler/mkrscimg cfg-for-rsc.scm
+	RS=$(STAGING_INSTALL_DIR)/bin/rs $(srcdir)/compiler/mkrscimg \
+	  $(srcdir)/compiler \
+	  $(STAGING_INSTALL_DIR)/resource/compiler \
+	  cfg-for-rsc.scm
+
+# This also creates modules/subproj.mak.
+system.bas: $(MODULES)
+	$(RSC_FOR_BUILD) -o $@
+
+# Fill install/include/rscheme with all the subproject headers.
+# This needs to be done after "make modules" and "make base-image".
+subproj-includes::
+	for d in handc $(MODULES_SUBDIR) ; do \
+	  (cd "$$d" && $(MAKE) subproj-includes) ; \
+	done
+
+# subproj-includes must be made first.
+$(LIB_RS) base-lib: handc/libhandc.a $(MODULES_SUBDIR)/libmodules.a
+	TMPDIR=librstmp \
+	  && mkdir -p "$$TMPDIR" \
+	  && rm -f "$$TMPDIR"/* \
+	  && cd "$$TMPDIR" \
+	  && ar x ../handc/libhandc.a \
+	  && ar x ../$(MODULES_SUBDIR)/libmodules.a
+	$(AR) ru $(LIB_RS) librstmp/*.o
+	$(RANLIB) $(LIB_RS)
+	@# Can we conditionalize this?
+	cp -f $(top_srcdir)/handc/platform/aix/rs.exp $(STAGING_INSTALL_DIR)/lib/rs.exp
+
+handc/libhandc.a::
+	cd handc && $(MAKE) libhandc.a
+
+$(MODULES_SUBDIR)/libmodules.a::
+	cd $(MODULES_SUBDIR) && $(MAKE) libmodules.a
+
+install::
+	mkdir -p $(FINAL_INSTALL_DIR)
+	cp -r $(STAGING_INSTALL_DIR)/* $(FINAL_INSTALL_DIR)
+
+###############################################################################
+
+# The base RScheme shell application
+# (a thin layer that simply provides access to the repl module's
+# Read-Eval-Print loop)
+
+shell:: $(STAGING_INSTALL_DIR)/bin/rs $(STAGING_INSTALL_DIR)/resource/system.img
+
+# The result of making the shell is put in the staging INSTALL_DIR.
+# The user-facing "make install" copies the staging INSTALL_DIR to --prefix.
+$(STAGING_INSTALL_DIR)/bin/rs: $(STAGING_INSTALL_DIR)/resource/buildenv/preamble.mak $(LIB_RS)
+	ABS_STAGING_INSTALL_DIR=`cd $(STAGING_INSTALL_DIR) && pwd` \
+	&& cd handc/rshell \
+	&& $(MAKE) INSTALL_DIR=$$ABS_STAGING_INSTALL_DIR \
+	    FINAL_INSTALL_DIR=$(FINAL_INSTALL_DIR)
+	$(INSTALL) handc/rshell/rs $(STAGING_INSTALL_DIR)/bin/rs
+
+# patch the base shell's boot image
+$(STAGING_INSTALL_DIR)/resource/system.img: $(SYSTEM_BAS) $(STAGING_INSTALL_DIR)/bin/rs
+	$(STAGING_INSTALL_DIR)/bin/rs -image $(SYSTEM_BAS) -c.repl $@
+
+###############################################################################
+
+# `make stage0-source' after `make base-system` will create subdirectory
+# "stage0" such that when added to the source tree will construct a tree
+# appropriate for distribution packaging that one can then build Rscheme
+# without needing an existing copy of Rscheme.
+#
+# To install "stage0" into the source tree after it is created use
+# "make install-stage0-source".
+
+.PHONY: stage0-source install-stage0-source build-stage0 bootstrap
+
+stage0-source::
+	@if test -f configure.ac ; \
+	then \
+	  echo >&2 "Error: building stage0 sources is not supported when builddir==srcdir" ; \
+	  exit 1 ; \
+	fi
+	@echo "Cleaning up modules, removing configure+build artifacts ..."
+	cd modules && $(MAKE) distclean STAGE0_SOURCE=yes
+	rm -rf stage0
+	cp -a modules stage0
+	@# Save additional files needed for stage0 builds.
+	@# There is only a few files so we handle them here.
+	cp install/include/rscheme/rlseconf.h stage0
+	cp install/include/rscheme/stdmodul.h stage0
+	for f in bcfrags.ci bcojump.ci bcpjump.ci ; do \
+	  cp handc/bci/$$f stage0 ; \
+	done
+	cp system.bas stage0
+	@# The tree is unusable because we use "make distclean" to clean up
+	@# the directory for simplicity's sake.
+	@echo >&2 "WARNING: At this point the build tree is no longer usable,"
+	@echo >&2 "         except for \"make install-stage0-source\"".
+
+install-stage0-source::
+	@echo "Copying stage0 to $(srcdir)/stage0 ..."
+	rm -rf "$(srcdir)/stage0"
+	cp -a stage0 "$(srcdir)"
+
+# Stage1 builds use the stage0 C code set up by `stage0-source', allowing the
+# build to complete without needing an initial Rscheme installation.
+#
+# Note: We need to run configure for both the stage0 and stage1 builds as
+# configure generates various files based on platform and environment used
+# by the build, and we need those files for both stage0 and stage1.
+# In other words, we can't remove the configure invocation for building stage0.
+
+# TODO: Make a configure parameter?
+STAGE0_CONFIG_OPTS=
+
+build-stage0:: init-base-system subproj-includes base-lib shell
+
+# Convenience rule for building with stage0.
+bootstrap::
+	@if test ! -d $(abs_top_srcdir)/stage0 ; \
+	then \
+	  echo >&2 "Error: Directory stage0 is not present in the source tree" ; \
+	  exit 1 ; \
+	fi
+	mkdir -p build0
+	cd build0 && $(abs_top_srcdir)/configure \
+	  --prefix=$(abs_top_builddir)/install0 \
+	  --enable-stage0-build --without-packages \
+	  $(STAGE0_CONFIG_OPTS)
+	@# RS has not been built yet, but it will be when needed.
+	cd build0 && $(MAKE) build-stage0 RS=`pwd`/$(STAGING_INSTALL_DIR)/bin/rs
+	@echo "At this point \"make all\" will build with the bootstrap RS."
+
+###############################################################################
+
+.PHONY: clean distclean check
+
+# We don't have an "all" rule that this would coincide with.
+# Instead, this cleans out everything made by any build.
+clean::
+	rm -f buildcfg.scm cfg-for-rsc.scm
+	rm -rf for-build librstmp
+	rm -f *.stamp
+	rm -f $(LIB_RS)
+	rm -f system.bas
+	rm -f $(STAGING_INSTALL_DIR)/bin/*
+	rm -f $(STAGING_INSTALL_DIR)/resource/modules/*
+	for d in handc $(MODULES_SUBDIR) test ; do \
+	  (cd "$$d" && $(MAKE) clean) ; \
+	done
+	for d in $(CONFIG_SUBDIRS) ; do \
+	  test -d "$$d" && (cd "$$d" && $(MAKE) clean) ; \
+	done
+	cd handc/rshell && $(MAKE) INSTALL_DIR=$(STAGING_INSTALL_DIR) clean
+	@# These use make.pkg and thus need to be treated separately.
+	@# XYZDJE: there are more make.pkg packages in the tree, make.bld too
+	-cd packages/general ; $(MAKE) clean
+	-cd packages/threads/shell ; $(MAKE) clean
+
+# distclean cleans everything including files generated at configure time.
+distclean:: clean
+	rm -f config.h config.log config.status
+	rm -f $(STAGING_INSTALL_DIR)/buildsty.h
+	rm -f $(STAGING_INSTALL_DIR)/modulo.h
+	rm -f $(STAGING_INSTALL_DIR)/platform.h
+	rm -f stage0-system.bas
+	find . -name autom4te.cache -print | xargs rm -rf
+	: xargs rm -rf < distcleanfiles
+	for d in handc $(MODULES_SUBDIR) test ; do \
+	  (cd "$$d" && $(MAKE) distclean) ; \
+	done
+	cd handc/rshell && $(MAKE) INSTALL_DIR=$(STAGING_INSTALL_DIR) distclean
+	for d in $(CONFIG_SUBDIRS) ; do \
+	  test -d "$$d" && (cd "$$d" && $(MAKE) distclean) ; \
+	done
+	@# This must be done AFTER doing distclean in rshell.
+	@# FIXME: rm -rf install instead?
+	rm -f $(STAGING_INSTALL_DIR)/resource/buildenv/*
+	rm -f $(STAGING_INSTALL_DIR)/resource/modules/*
+	rm -f Makefile
+
+check::
+	cd test && $(MAKE) check
+
+###############################################################################
+
+# Autoconf doc-suggested regeneration rules.
+# See autoconf.info "Automatic Remaking".
+
+$(srcdir)/configure: configure.ac
+	cd '$(srcdir)' && autoconf
+	@echo "Remember the autom4te.cache directories are deletable"
+
+config.h: config.stamp
+config.stamp: config.h.in config.status
+	./config.status config.h
+	echo timestamp > $@
+
+Makefile: Makefile.in config.status
+	./config.status Makefile
+
+config.status: configure
+	./config.status --recheck
+
+###############################################################################
+
+# Modules
+# The first target is a convenience spelling for humans.
+
+BCDEFS=$(STAGING_INSTALL_DIR)/resource/compiler/bytecode/bcgen.scm
+
+$(MODULES_DIR)/primops.mif $(BCDEFS): $(RSC_IMG_FOR_BUILD)
+	$(RS) -q -image $(RSC_IMG_FOR_BUILD) \
+	  -e '(process-defs-file "$(srcdir)/bytcodes/bcdefs.dat")' \
+	  -e "(create-primop-module 'primops)" -exit
+
+precore $(MODULES_DIR)/precore.mif: $(BCDEFS)
+	$(RSC_FOR_BUILD) -precore $(RSC_FLAGS) $(srcdir)/modules/corelib/precore.mcf
+
+corelib $(MODULES_DIR)/corelib.mif: $(BCDEFS)
+	$(RSC_FOR_BUILD) -corelib $(RSC_FLAGS) $(RSC_FLAGS2) $(srcdir)/modules/corelib/corelib.mcf
+
+lowscm $(MODULES_DIR)/low_scheme.mif: $(BCDEFS)
+	$(RSC_FOR_BUILD) -lowscm $(RSC_FLAGS) $(RSC_FLAGS2) $(srcdir)/modules/lowscm/lowscm.mcf
+
+objsys $(MODULES_DIR)/objsys.mif: $(BCDEFS)
+	$(RSC_F) $(RSC_FLAGS2) $(srcdir)/modules/objsys/objsys.mcf
+
+paths $(MODULES_DIR)/paths.mif: $(BCDEFS)
+	$(RSC_F) $(srcdir)/modules/paths/paths.mcf
+
+tables $(MODULES_DIR)/tables.mif: $(BCDEFS)
+	$(RSC_F) $(srcdir)/modules/tables/tables.mcf
+
+mathlib $(MODULES_DIR)/mathlib.mif: $(BCDEFS)
+	$(RSC_F) $(srcdir)/modules/mathlib/mathlib.mcf
+
+iolib $(MODULES_DIR)/iolib.mif: $(BCDEFS)
+	$(RSC_F) $(RSC_FLAGS2) $(srcdir)/modules/iolib/iolib.mcf
+
+highscm $(MODULES_DIR)/high_scheme.mif: $(BCDEFS)
+	$(RSC_F) $(RSC_FLAGS2) $(srcdir)/modules/highscm/highscm.mcf
+
+start $(MODULES_DIR)/start.mif: $(BCDEFS)
+	$(RSC_F) $(srcdir)/modules/start/start.mcf
+
+sort $(MODULES_DIR)/sort.mif: $(BCDEFS)
+	$(RSC_F) $(srcdir)/modules/sort/sort.mcf
+
+imageio $(MODULES_DIR)/imageio.mif: $(BCDEFS)
+	$(RSC_F) $(srcdir)/modules/imageio/imageio.mcf
+
+editinp $(MODULES_DIR)/editinp.mif: $(BCDEFS)
+	$(RSC_F) $(srcdir)/modules/editinp/editinp.mcf
+
+compiler $(MODULES_DIR)/compiler.mif: $(BCDEFS)
+	$(RSC_F) $(RSC_FLAGS2) $(srcdir)/modules/compiler/compiler.mcf
+
+codegen $(MODULES_DIR)/codegen.mif: $(BCDEFS)
+	$(RSC_F) $(RSC_FLAGS2) $(srcdir)/modules/codegen/codegen.mcf
+
+mlink $(MODULES_DIR)/mlink.mif: $(BCDEFS)
+	$(RSC_F) $(srcdir)/modules/mlink/mlink.mcf
+
+repl $(MODULES_DIR)/repl.mif: $(BCDEFS)
+	$(RSC_F) $(srcdir)/modules/repl/repl.mcf
+
+debugger $(MODULES_DIR)/debugger.mif: $(BCDEFS)
+	$(RSC_F) $(srcdir)/modules/debugger/debugger.mcf
+
+regex $(MODULES_DIR)/regex.mif: $(BCDEFS)
+	$(RSC_F) $(srcdir)/modules/regex/regex.mcf
+
+earley $(MODULES_DIR)/earley.mif: $(BCDEFS)
+	$(RSC_F) $(srcdir)/modules/earley/earley.mcf
+
+threads $(MODULES_DIR)/threads.mif: $(BCDEFS)
+	$(RSC_F) $(srcdir)/modules/threads/threads.mcf
+
+hacks $(MODULES_DIR)/hacks.mif: $(BCDEFS)
+	$(RSC_F) $(srcdir)/modules/hacks/hacks.mcf
+
+###############################################################################
+
+# Packages
+
+pkg/modules:
+	if test -x /bin/mkdirs ; \
+	then /bin/mkdirs pkg/modules ;\
+	else mkdir -p pkg/modules ; \
+	fi
+
+PACKAGES=@default_pkgs@
+
+packages::
+	for i in $(PACKAGES) ; \
+	do if $(MAKE) PACKAGE=$$i package ; \
+	   then : ; \
+	   else exit 1 ; \
+	   fi ; \
+	done
+
+# FIXME: Use STAGING_INSTALL_DIR?
+package:: pkg/modules $(RSC)
+	cd $(top_builddir) ; packages/pkg-bld $(INSTALL_DIR) $(PACKAGE)
+
+#  some fasl things
+#  (can only run these after installation is complete)
+#
+# my usual personal selection...
+#  SHELL_MODULES=syscalls unixm rstore calendar sets threads fasl debugger
+
+SHELL_MODULES=all
+
+# FIXME: Use STAGING_INSTALL_DIR?
+fasl-shell::
+	@if test -z "$(SHELL_MODULES)" ; then echo SHELL_MODULES: not set ; \
+	 exit 1 ; fi
+	INSTALL_DIR=$(INSTALL_DIR) sh pkg/fasl/mkfasl fshell $(SHELL_MODULES)
+	cd fshell ; $(MAKE) INSTALL_DIR=$(INSTALL_DIR)
+
+install-fasl-shell::
+	cd fshell ; $(MAKE) INSTALL_DIR=$(INSTALL_DIR) install

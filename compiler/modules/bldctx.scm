@@ -33,6 +33,8 @@
     (user-inc-path init-value: '())
     (system-inc-path init-value: '())
     (parts init-value: '())
+    (top-src-dir init-value: #f)
+    (top-build-dir init-value: #f)
     (dest-dir init-value: '#uninit type: <directory-name>)
     (dest-dir-exists? init-value: #f)
     (image-dest-dir init-value: '#uninit type: <directory-name>)

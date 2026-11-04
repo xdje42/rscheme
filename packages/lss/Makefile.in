@@ -1,5 +1,7 @@
 
-#
+srcdir=@srcdir@
+VPATH=@srcdir@
+
 default:: lssctl
 
 srcdir=@srcdir@

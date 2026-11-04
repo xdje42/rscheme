@@ -8,7 +8,20 @@
 # Date:    %G% %U%
 # Build:   %b%
 #
+
+# INSTALL_DIR must be passed to us an argument to $(MAKE).
+# It's value points to the install tree with the build inputs.
 #
+# FINAL_INSTALL_DIR defaults to INSTALL_DIR. It is compiled into "rs" as its
+# (ultimate) installation directory.
+
+@C@ifeq ($(INSTALL_DIR),)
+@C@$(error INSTALL_DIR not defined)
+@C@endif
+
+top_srcdir=@top_srcdir@
+srcdir=@top_srcdir@/handc/rshell
+VPATH=@top_srcdir@/handc/rshell
 
 FINAL_INSTALL_DIR=$(INSTALL_DIR)
 XCFLAGS='-DINSTALL_DIR="$(FINAL_INSTALL_DIR)"'
@@ -17,7 +30,6 @@ include $(INSTALL_DIR)/resource/buildenv/preamble.mak
 
 CFILES=shell.c
 PRODUCT=rs
-INSTALL=cp -p
 
 OFILES=$(CFILES:.c=.o)
 LIB_RS=$(INSTALL_DIR)/lib/librs.a
@@ -25,14 +37,11 @@ LIB_RS=$(INSTALL_DIR)/lib/librs.a
 $(PRODUCT): $(OFILES) $(LIB_RS)
 	$(CC) $(CFLAGS) $(OFILES) -o $(PRODUCT) $(LDX_FLAGS)
 
-install:: $(INSTALL_DIR)/bin
-	$(INSTALL) $(PRODUCT) $(INSTALL_DIR)/bin
-
-$(INSTALL_DIR)/bin:
-	mkdir $(INSTALL_DIR)/bin
-
 clean::
-	rm -f $(OFILES) $(PRODUCT)
+	rm -f *.o $(PRODUCT)
+
+distclean:: clean
+	rm -f Makefile
 
 depend::
 	$(CC) $(CFLAGS) -MM -I. $(CFILES) > depends

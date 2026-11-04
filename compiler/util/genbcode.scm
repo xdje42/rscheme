@@ -43,7 +43,7 @@
     (set! *primop-table* '())
     (set! *opcode-table* '())
     (call-with-output-path
-	(append-path *dist-path* (string->file "bci/bcfrags.ci"))
+	(append-path *dist-build-dir* (string->file "handc/bci/bcfrags.ci"))
       (lambda (f1)
 	(set! *frags* f1)
 	(call-with-output-path
@@ -67,7 +67,7 @@
     (let ((write-byte-code-jump-table
 	   (lambda (file-name prefix num-codes max-codes last-string)
 	       (call-with-output-path 
-	           (append-path *dist-path* (string->file file-name))
+	           (append-path *dist-build-dir* (string->file file-name))
 		 (lambda (p)
 		   (letrec
 		       ((last-code (- max-codes 1))
@@ -87,10 +87,10 @@
 				    (loop (+ bc 1))))))))
 		     (loop 0)
 		     (format p last-string)))))))
-      (write-byte-code-jump-table 
-       "bci/bcojump.ci" "bco" *num-opcodes* 254 ", &&bco__254, &&bco__255\n")
-      (write-byte-code-jump-table 
-       "bci/bcpjump.ci" "bcp" *num-primops* 256 "")))
+      (write-byte-code-jump-table
+       "handc/bci/bcojump.ci" "bco" *num-opcodes* 254 ", &&bco__254, &&bco__255\n")
+      (write-byte-code-jump-table
+       "handc/bci/bcpjump.ci" "bcp" *num-primops* 256 "")))
 
     
 (define *num-opcodes* 0)

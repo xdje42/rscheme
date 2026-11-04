@@ -9,6 +9,13 @@
 # Build:   %b%
 #
 
+top_srcdir=@top_srcdir@
+srcdir=@top_srcdir@/handc/loadboot
+VPATH=@top_srcdir@/handc/loadboot
+
+top_builddir=@top_builddir@
+
 CFILES=loadboot.c
 PRODUCT=ldboot.o
-include ../postambl.mak
+
+include $(top_builddir)/postambl.mak
