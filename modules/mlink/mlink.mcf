@@ -13,7 +13,7 @@
  | Purpose:          module control file
  `------------------------------------------------------------------------|#
 
-((mlink "$dist/mlink" "$install/resource/modules")
+((mlink "$dist/modules/mlink" "$install/resource/modules")
  (open primops *scheme* iolib low-scheme objsys mathlib tables)
  (open high-scheme corelib paths)
  (files seq

@@ -1,0 +1,53 @@
+# Rscheme testsuite
+#
+# There are various ways a test can fail. Rather than trying to catch them all
+# we let build-test.sh report PASS, and catch failures in this Makefile.
+#
+# TODO: Add wrappers for the scm tests.
+
+SHELL=/bin/sh
+
+abs_top_srcdir = @abs_top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+TESTS = \
+	test-build-stage0-source \
+	test-build-stage0 \
+	test-build-bootstrap
+
+# "make check" is the GNU convention for running testsuites.
+.PHONY: check
+check:: $(TESTS)
+
+# Test building stage0 source.
+.PHONY: test-build-stage0-source
+test-build-stage0-source::
+	if ! $(SHELL) $(srcdir)/build-test.sh $(abs_top_srcdir) stage0-source ; \
+	then echo "$@: FAIL" ; \
+	fi
+
+# Test building stage0
+.PHONY: test-build-stage0
+test-build-stage0::
+	if ! $(SHELL) $(srcdir)/build-test.sh $(abs_top_srcdir) stage0 ; \
+	then echo "$@: FAIL" ; \
+	fi
+
+# Test bootstrapping with stage0
+.PHONY: test-build-bootstrap
+test-build-bootstrap::
+	if ! $(SHELL) $(srcdir)/build-test.sh $(abs_top_srcdir) bootstrap ; \
+	then echo "$@: FAIL" ; \
+	fi
+
+.PHONY: clean
+clean::
+	rm -rf build-*
+
+.PHONY: distclean
+distclean:: clean
+	rm -f Makefile
+
+Makefile: Makefile.in ../config.status
+	cd .. && ./config.status test/Makefile

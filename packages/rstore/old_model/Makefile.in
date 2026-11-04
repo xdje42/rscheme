@@ -1,4 +1,7 @@
 
+srcdir=@srcdir@
+VPATH=@srcdir@
+
 default:: all
 
 RSCHEME_DIR=@rs_prefix@

@@ -1,0 +1,44 @@
+#
+# Common fragment for handc and module subdirectories
+#
+# Subproject makefiles refer to this file as ../../postambl.mak, and having
+# done that it can then refer to configure-generated values like abs_top_srcdir
+# defined herein.
+#
+# IS_MODULE is defined in module makefiles.
+#
+
+abs_top_srcdir=@abs_top_srcdir@
+abs_top_builddir=@abs_top_builddir@
+
+include $(abs_top_builddir)/build-config.mak
+
+OFILES=$(CFILES:.c=.o) $(CCFILES:.cc=.o)
+
+$(PRODUCT): $(OFILES)
+	$(LD) $(LDR_FLAGS) $(OFILES) -o $(PRODUCT)
+	if test "$(IS_MODULE)" = yes ; then \
+	  ar ru ../libmodules.a $(PRODUCT) ; \
+	else \
+	  ar ru ../libhandc.a $(PRODUCT) ; \
+	fi
+
+install-headers::
+	$(SHELL) $(abs_top_srcdir)/copy-subproj-headers \
+	  "$(srcdir)" "$(STAGING_INSTALL_DIR)/include" $(USE_INLINES)
+
+# PRODUCT is always a .o file, so no need to explicitly delete it.
+clean::
+	rm -f *.o
+
+# If doing a stage0 source build, don't remove module makefiles.
+# They are needed when later building stage0.
+# STAGE0_SOURCE is overridden by "make ship".
+STAGE0_SOURCE=no
+distclean:: clean
+	if test "$(IS_MODULE)" != yes -o "$(STAGE0_SOURCE)" != yes ; \
+	then rm -f Makefile ; \
+	fi
+
+depend::
+	$(CC) $(CFLAGS) -MM -I. $(CFILES) > depends

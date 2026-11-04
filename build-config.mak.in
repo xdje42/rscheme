@@ -1,0 +1,29 @@
+##
+## build configuration variables for handc, modules, and their subdirectories
+##
+
+# top_srcdir, srcdir, top_builddir must be defined in the including Makefile
+# if desired. Only there will potentially relative paths have correct values.
+
+# Use an absolute path so that this works for subdirectories too.
+abs_top_srcdir=@abs_top_srcdir@
+abs_top_builddir=@abs_top_builddir@
+
+SHELL=/bin/sh
+
+# Files are staged here first, and then copied to --prefix.
+# This uses abs_top_builddir so the correct value for INSTALL_DIR can be
+# passed to rshell/Makefile.
+STAGING_INSTALL_DIR=$(abs_top_builddir)/install
+
+IFLAGS=-I. -I$(srcdir) -I$(STAGING_INSTALL_DIR)/include
+
+CC=@COMPILE@
+CFLAGS1=@CFLAGS@
+CFLAGS=$(CFLAGS1) $(IFLAGS)
+
+LD=@LD@
+LDR_FLAGS=-r
+LDX_FLAGS=@LDX_FLAGS@
+
+USE_INLINES=@USE_INLINES@

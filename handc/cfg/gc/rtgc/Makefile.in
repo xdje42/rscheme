@@ -1,0 +1,22 @@
+
+# Autoconf doesn't provide a way to set srcdir to the source of the original
+# Makefile.in file, so we have to compensate.
+top_srcdir=@top_srcdir@
+srcdir=@top_srcdir@/handc/cfg/gc/rtgc
+VPATH=@top_srcdir@/handc/cfg/gc/rtgc
+
+top_builddir=@top_builddir@
+
+CCFILES=colorset.cc gc.cc gen.cc objmgr.cc gcserver.cc \
+	allocator.cc igps.cc scheduler.cc pointers.cc scanroot.cc
+CFILES=sizclass.c
+PRODUCT=qgc.o
+
+include $(top_builddir)/postambl.mak
+
+.SUFFIXES: .cc .o
+
+.cc.o:
+	$(CC) $(CFLAGS) -c $*.cc
+.c.o:
+	$(CC) $(CFLAGS) -c $*.c

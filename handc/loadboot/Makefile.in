@@ -1,0 +1,21 @@
+#
+# File:    handc/loadboot/Makefile
+#
+#          Copyright (C)1995 Donovan Kolbly <donovan@tkg.com>
+#          as part of the RScheme project, licensed for free use
+#
+# Version: %I%
+# Date:    %G% %U%
+# Build:   %b%
+#
+
+top_srcdir=@top_srcdir@
+srcdir=@top_srcdir@/handc/loadboot
+VPATH=@top_srcdir@/handc/loadboot
+
+top_builddir=@top_builddir@
+
+CFILES=loadboot.c
+PRODUCT=ldboot.o
+
+include $(top_builddir)/postambl.mak

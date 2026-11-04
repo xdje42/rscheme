@@ -15,6 +15,7 @@
 ,(use editinp)
 
 ;;; if we are in pre-0.7.3, add `#optional'
+;;; FIXME: This can be deleted, 0.7.3 is the minimum supported version now.
 
 (if (not (string->unique-object "#optional"))
     (add-unique-object! "#optional" 9))
@@ -27,17 +28,20 @@
 
 ;;; if we are pre-0.7.3.1, then we don't have SRFI-0, so
 ;;; put in a stubby implementation of one
+;;; FIXME: This can be deleted, 0.7.3 is the minimum supported version now.
 
 (if (not ((exported-value compiler lookup) *self* 'if-implements))
     (eval '(define-macro (if-implements fid t f) f) *the-envt*))
 
 ;; move some config defn's into the compiler's envt
-;;
 
 (define-syntax (push-value-into-compiler name)
   (eval `(define ,(mquote name) ',name) *the-envt*))
 
-(push-value-into-compiler *dist-path*)
+;; For consistency, keep this ordered the same as in mkcfg.
+(push-value-into-compiler *dist-src-dir*)
+(push-value-into-compiler *dist-build-dir*)
+(push-value-into-compiler *install-dir*)
 (push-value-into-compiler *rscheme-version*)
 (push-value-into-compiler *rscheme-build*)
 (push-value-into-compiler *rscheme-build-vlist*) ;; version as a num list
@@ -154,6 +158,7 @@
       (cmd-loop *the-envt* "rsc[~d]=>"))))
 |#
 
+;; FIXME: Get version from RSCHEME_VERSION.
 (vector-set! (rscheme-global-ref 0) 
 	     1
 	     "RScheme Compiler (v0.7.3)")

@@ -12,10 +12,8 @@
  |
  `------------------------------------------------------------------------|#
 
-
-;; a source resource is a resource found in 
-;; the SOURCE's resource search path
-;; (that is, either in $SOURCE/resource or in $SOURCE/dist/install/resource)
+;; a source resource is a resource found in the SOURCE's resource search path
+;; (that is, either in $SOURCE/resource or in $SOURCE/install/resource)
 ;;
 ;; (note that that means we can access resources that will eventually
 ;;  be installed)
@@ -38,19 +36,21 @@
 		p
 		(loop (cdr i))))))))
 
-
 ;; return the pathname to a resource that is to be placed
 ;; in the distribution, and is intended to be installed
 
 (define (install-resource-path rsrc-path)
-  (append-path *dist-install-resource-dir* (string->file rsrc-path)))
+  (append-path *install-resource-dir* (string->file rsrc-path)))
 
 ;; return the pathname to a resource that is to be put
 ;; in the distribution, but is NOT intended to be installed
+;; This is currently unused. It is kept for future concerns.
 
 (define (distribution-resource-path rsrc-path)
   (append-path *dist-resource-dir* (string->file rsrc-path)))
 
+;; Translate $install and $dist in str.
+;; `in-dir' is prepended if str is a relative path.
 
 (define (string->dist-dir in-dir str)
   (let* ((d (string->dir str))
@@ -59,17 +59,17 @@
 		#f
 		(car steps))))
     (if (string? h)
-	(if (string=? h "$install")
-	    (begin
-	      (gvec-set! d 1 (cdr (gvec-ref d 1)))
-	      (append-dirs (append-dirs *dist-path* 
-					(string->dir "install"))
-			   d))
-	    (if (string=? h "$dist")
-		(begin
-		  (gvec-set! d 1 (cdr (gvec-ref d 1)))
-		  (append-dirs *dist-path* d))
-		(append-dirs in-dir d)))
+	(cond
+	 ((string=? h "$install")
+	  (begin
+	    (gvec-set! d 1 (cdr (gvec-ref d 1)))
+	    (append-dirs *install-dir* d)))
+	 ((string=? h "$dist")
+	  (begin
+	    (gvec-set! d 1 (cdr (gvec-ref d 1)))
+	    (append-dirs *dist-build-dir* d)))
+	 (else
+	  (append-dirs in-dir d)))
 	(append-dirs in-dir d))))
 
 ;;

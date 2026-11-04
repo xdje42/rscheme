@@ -22,6 +22,22 @@
 
 extern int bci_trace_flag;
 
+static const char help_text[] = "\
+Usage: rs [options] [script-file] [script file args ...]\n\
+\n\
+Options:\n\
+-abt               - turn on Apply BackTracing\n\
+-bcitrace          - turn on ByteCode Interpreter tracing\n\
+-image image-file  - use image-file instead of the default\n\
+-q                 - turn on quiet mode\n\
+-qimage image-file - same as -image but turn on quite mode too\n\
+-script            - turn on quiet mode and run script-file\n\
+-stepdump          - turn on step dumping (if supported)\n\
+--help             - print usage info\n\
+--install          - print Rscheme's installation directory\n\
+--version          - print Rscheme's version\n\
+";
+
 /*
  *  returns a pointer to possibly static data, or returns NULL
  *  if the image can't be found
@@ -43,7 +59,12 @@ int rscheme_std_main( int argc, const char **argv,
 
   for (i=1; i<argc && argv[i][0] == (char)'-'; i++)
     {
-      if (strcmp(argv[i],"-image") == 0)
+      if (strcmp(argv[i],"--help") == 0)
+        {
+	  printf("%s", help_text);
+	  return 0;
+        }
+      else if (strcmp(argv[i],"-image") == 0)
 	{
 	  if (i+1 >= argc)
 	    goto miss_arg;

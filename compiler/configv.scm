@@ -36,17 +36,11 @@
 ;; standard modules plus the base runtime subprojects
 ;;
 
+;; List of base runtime components that have module descriptors.
+;; These are recorded as symbols but they actually are part of C symbol names:
+;; module_$name.
 (define *base-runtime-components*
-  '(#("runtime" "runtime" "runtime" rscheme)
-    #("hasht" "hasht" "hasht" #f)
-    #("heapi" "heapi" "heapi" #f)
-    #("loadboot" "loadboot" "ldboot" #f)
-    #("unstub" "unstub" "unstb" #f)
-    #("gc" "gc" "xgc" #f)
-    #("gcadapt" "gcadapt" "gcadapt" #f)
-    #("rdln" "rdln" "rdln" #f)
-    #("bci" "bci" "bci" bci)
-    #("dfltmain" "dfltmain" "dfltmain" #f)))
+  '(rscheme bci))
 
 ;; must be listed most-requiring to least-requiring
 ;; (so the last module can depend on at most *scheme* and primops)
@@ -76,40 +70,36 @@
 
 ;; make our path as absolute as we can...
 
-(define *source-path* (append-dirs (process-directory) (current-directory)))
+(define *source-dir* (append-dirs (process-directory) (current-directory)))
 
 ;; derived values...
 
-
 ;; for writing directly into the distribution
-;; (create using `install-resource->path'
-;;           and `distribution-resource->path',
+;; (create using `install-resource-path'
+;;           and `distribution-resource-path',
 ;;  respectively for a resource that is to make
 ;;  it to the installation and one that is part
 ;;  of the distribution, but not part of the installation)
 
-(define *dist-install-resource-dir* 
-  (append-dirs *dist-path* (string->dir "install/resource")))
+(define *install-resource-dir*
+  (append-dirs *install-dir* (string->dir "resource")))
 
-(define *dist-resource-dir* 
-  (append-dirs *dist-path* (string->dir "resource")))
+;; This is currently unused. It is kept for future concerns.
+(define *dist-resource-dir*
+  (append-dirs *dist-src-dir* (string->dir "resource")))
 
 ;; note that each stage of the end-to-end build gets
 ;; it's own resource directory
 ;; (search using `locate-src-resource')
 
 (define *source-resource-path*
-  (list (append-dirs *source-path* (string->dir "resource"))
-	(append-dirs *source-path* (string->dir "dist/resource"))
-	(append-dirs *source-path* (string->dir "dist/install/resource"))))
+  (list (append-dirs *source-dir* (string->dir "resource"))
+	(append-dirs *source-dir* (string->dir "dist/resource"))
+	(append-dirs *source-dir* (string->dir "install/resource"))))
 
 (define *dist-resource-path*
-  (list (append-dirs *dist-path* (string->dir "resource"))
-	(append-dirs *dist-path* (string->dir "install/resource"))))
+  (list (append-dirs *dist-src-dir* (string->dir "resource"))
+	(append-dirs *dist-src-dir* (string->dir "install/resource"))))
 
-;; we can't form an install resource path, because at this
-;; stage the system hasn't been configured
-
-;; (note that, once we get inside ourselves again, then there
-;;  will be an install path which represents what we're running
-;;  in now, but pre-0.6.0 doesn't have resource directories)
+(define *install-resource-path*
+  (list (append-dirs *install-dir* (string->dir "resource"))))

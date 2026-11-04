@@ -1,0 +1,52 @@
+##
+## Makefile for rscheme/modules and rscheme/stage0.
+##
+
+SHELL=/bin/sh
+
+top_srcdir=@top_srcdir@
+srcdir=@srcdir@
+VPATH=@srcdir@
+
+top_builddir=@top_builddir@
+
+LIBMODULES=libmodules.a
+
+ENABLE_STAGE0_BUILD=@ENABLE_STAGE0_BUILD@
+
+include $(top_builddir)/build-config.mak
+
+default:
+	@echo "There is no default target."
+	@echo "See how the parent Makefile invokes us."
+
+# This appears after the default rule as it defines its own rules.
+include subproj.mak
+
+# SUBPROJ_DEPS is defined in subproj.mak.
+# subproj-includes.stamp must be made first.
+$(LIBMODULES) all: $(SUBPROJ_DEPS)
+	@# All the object files have already been added to $(TARGET).
+
+subproj-includes::
+	for subdir in $(SUBPROJ_DIRS) ; \
+	do \
+	  if test -d $$subdir ; then \
+	    echo "Copying headers for $$subdir" ; \
+	    (cd $$subdir ; $(MAKE) install-headers) ; \
+	  fi ; \
+	done
+
+# When building stage0 there is no Makefile.in, so comment this out.
+@C@ifneq ($(ENABLE_STAGE0_BUILD), yes)
+@C@Makefile: Makefile.in $(top_builddir)/config.status
+@C@	cd $(top_builddir) && ./config.status modules/Makefile
+@C@endif
+
+clean::
+	for i in $(SUBPROJ_DIRS) ; do (cd $$i && $(MAKE) clean) ; done
+	rm -f $(LIBMODULES)
+
+distclean:: clean
+	for i in $(SUBPROJ_DIRS) ; do (cd $$i && $(MAKE) distclean) ; done
+	rm -f Makefile

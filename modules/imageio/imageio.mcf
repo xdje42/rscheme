@@ -11,7 +11,7 @@
  `------------------------------------------------------------------------|#
 
 ((imageio
-	"$dist/imageio"
+	"$dist/modules/imageio"
 	"$install/resource/modules")
 
  (require-c-header "<string.h>")

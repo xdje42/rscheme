@@ -3,46 +3,71 @@
 #  Build the configuration script that is loaded by the
 #  compiler to get all the configuration settings, including
 #  the version of RScheme being built and the pathnames
+# FIXME: Is the version the version being built or the version doing the build?
 
-dist_path=$1
-build_id="$2"
-dist_path=`cd $dist_path ; pwd`
+echo "This is mkcfg in $(pwd)" >&2
+echo "Args: $@" >&2
+set -x
 
-b="${build_id}"
-if test -z "$b"
-then b="Dev Build, `date +'%Y-%m-%d %H:%M'`"
+# Rscheme's convention is to write foo-dir, not foodir.
+# However, we keep this script's arguments named foodir to match
+# autoconf's convention.
+# In the Rscheme build tree these values are top_srcdir and top_builddir.
+# "dist" is short for "distribution": think "bootstrappable tarball".
+dist_src_dir=$1
+dist_build_dir=$2
+
+# install_dir is where files go that are to be installed
+# (installed -> think "make install")
+# For the installed compiler pass INSTALL_DIR.
+install_dir=$3
+
+version=$4
+build_id=$5
+
+# These directories needn't exist yet if they're at --prefix.
+# There's not much we can do except warn the user and hope they're
+# absolute paths.
+if test ! -d "$dist_src_dir"
+then echo >&2 "Warning: dst_src_dir $dist_src_dir nonexistent"
+else dist_src_dir=`cd $dist_src_dir ; pwd`
 fi
 
-# strip off date part and leading "v"
-v=`echo "$b" | sed 's/,.*//' | sed 's/^v//'`
-vlist=`echo "$b" | sed 's/[^0-9][^0-9]*/ /g'`
+if test ! -d "$dist_build_dir"
+then echo >&2 "Warning: dist_build_dir $dist_build_dir nonexistent"
+else dist_build_dir=`cd $dist_build_dir ; pwd`
+fi
 
-#
-#  configure some build flags depending on what version of
-#  RScheme we are running in
-#
+if test ! -d "$install_dir"
+then echo >&2 "Warning: install_dir $install_dir nonexistent"
+else install_dir=`cd $install_dir ; pwd`
+fi
+
+# The combined version+build-id string as a list of numbers, eg, 0 7 3 5
+vlist=`echo "$version $build_id" | sed 's/[^0-9][^0-9]*/ /g'`
+
+# Configure some build flags depending on what version of RScheme we are
+# running. The current values are for version 0.7.3 and beyond. We do not
+# support bootstrapping with earlier versions.
 
 rsv=`$RS --version`
 
-case "$rsv" in
-  0.6*) sis=old ;;
-  *)    sis=new ;;
-esac
-
-case "$rsv" in
-  0.7.3*)    rfp=t ;;
-  *)         rfp=f ;;
-esac
+# Only Rscheme versions 0.7.3 and later are supported.
+sis=new
+rfp=t
 
 cat <<EOF
 ,(use paths)
 
+;; For consistency, keep this ordered the same as in mki.scm.
+(define *dist-src-dir* (string->dir "$dist_src_dir"))
+(define *dist-build-dir* (string->dir "$dist_build_dir"))
+(define *install-dir* (string->dir "$install_dir"))
+(define *rscheme-version* "$version")
+(define *rscheme-build* "$build_id")
+(define *rscheme-build-vlist* '($vlist))
 (define *save-image-signature* '$sis)
 (define *relative-file-paths* #$rfp)
-(define *dist-path* (string->dir "$dist_path"))
-(define *rscheme-build* "$b")
-(define *rscheme-version* "$v")
-(define *rscheme-build-vlist* '($vlist))
 EOF
 
-## ie, mkcfg > src/tmp/buildcfg.scm
+## ie, mkcfg > buildcfg.scm

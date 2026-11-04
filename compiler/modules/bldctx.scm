@@ -30,9 +30,11 @@
     (other-libs init-value: '())
     (extern-h-files init-value: '())
     (public-h-files init-value: '())  ;; our `.h' files that are public
-    (user-inc-path init-value: '())     ; pre -I- -I entries
-    (system-inc-path init-value: '())   ; post -I- -I entries
+    (user-inc-path init-value: '())     ; pre -I- -I entries (XYZDJE)
+    (system-inc-path init-value: '())   ; post -I- -I entries (XYZDJE)
     (parts init-value: '())
+    (top-src-dir init-value: #f)
+    (top-build-dir init-value: #f)
     (dest-dir init-value: '#uninit type: <directory-name>)
     (dest-dir-exists? init-value: #f)
     (image-dest-dir init-value: '#uninit type: <directory-name>)

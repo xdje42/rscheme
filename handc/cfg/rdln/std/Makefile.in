@@ -1,0 +1,23 @@
+#
+# File:    handc/cfg/rdln/std/Makefile
+#
+#          Copyright (C)1995 Donovan Kolbly <donovan@tkg.com>
+#          as part of the RScheme project, licensed for free use
+#
+# Version: %I%
+# Date:    %G% %U%
+# Build:   %b%
+#
+
+# Autoconf doesn't provide a way to set srcdir to the source of the original
+# Makefile.in file, so we have to compensate.
+top_srcdir=@top_srcdir@
+srcdir=@top_srcdir@/handc/cfg/rdln/std
+VPATH=@top_srcdir@/handc/cfg/rdln/std
+
+top_builddir=@top_builddir@
+
+CFILES=rdln_std.c
+PRODUCT=rdln.o
+
+include $(top_builddir)/postambl.mak

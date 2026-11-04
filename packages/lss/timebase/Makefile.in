@@ -1,3 +1,7 @@
+
+srcdir=@srcdir@
+VPATH=@srcdir@
+
 CC=@CC@
 CFLAGS=-g -O2
 CFILES=timebase_ops.c @READ_C@

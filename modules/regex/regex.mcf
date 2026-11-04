@@ -14,7 +14,7 @@
  `------------------------------------------------------------------------|#
 
 ((regex
-	"$dist/regex" 
+	"$dist/modules/regex" 
 	"$install/resource/modules")
  (open primops *scheme* iolib low-scheme objsys mathlib high-scheme)
  (open corelib tables)

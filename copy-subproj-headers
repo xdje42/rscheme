@@ -1,0 +1,30 @@
+#!/bin/sh
+# Utility script invoked by Makefile to copy each subproject's headers
+# into the staging install tree.
+
+set -x
+
+srcdir=$1
+destdir=$2
+use_inlines=$3 # either true or false
+
+# copy_include() {
+#    ln -f -s $1/$2 $3/rscheme/$2
+# }
+
+copy_include() { 
+  rm -f $2/rscheme/$3
+  cp $1/$3 $2/rscheme/$3
+}
+
+if test -r $srcdir/includes.lst
+then for hdr in `cat $srcdir/includes.lst`
+     do copy_include $srcdir $destdir $hdr
+     done
+fi
+
+if $use_inlines && test -r $srcdir/inlines.lst
+  then for hdr in `cat $srcdir/inlines.lst`
+       do copy_include $srcdir $destdir $hdr
+       done
+fi

@@ -13,7 +13,7 @@
  | Purpose:          module control file
  `------------------------------------------------------------------------|#
 
-((start "$dist/start" "$install/resource/modules")
+((start "$dist/modules/start" "$install/resource/modules")
  (open  primops *scheme* iolib low-scheme objsys mathlib tables high-scheme)
  (open corelib)
  (files start present)

@@ -12,7 +12,6 @@
  |
  `------------------------------------------------------------------------|#
 
-
 ;;
 ;; this path is suitable for SYSTEM BUILD
 ;;
@@ -21,9 +20,13 @@
 
 (define (reinit-library-path)
   (set! *library-path*
-	(map (lambda (base)
-	       (append-dirs base (string->dir "modules")))
-	     *dist-resource-path*)))
+	(append
+	 (map (lambda (base)
+		(append-dirs base (string->dir "modules")))
+	      *install-resource-path*)
+	 (map (lambda (base)
+		(append-dirs base (string->dir "modules")))
+	      *dist-resource-path*))))
 
 (reinit-library-path)
 
@@ -70,7 +73,7 @@
 (define (find-module name)
   (or (plain-find-module name)
       (hier-find-module name)
-      (error "could not find module: ~s" name)))
+      (error "could not find module: ~s, library-path: ~a" name *library-path*)))
 
 (load "../../modules/paths/locate.scm")
 

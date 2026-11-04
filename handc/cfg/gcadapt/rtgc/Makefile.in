@@ -1,0 +1,23 @@
+#
+# File:    handc/cfg/gcadapt/rtgc/Makefile
+#
+#          Copyright (C)1995 Donovan Kolbly <donovan@tkg.com>
+#          as part of the RScheme project, licensed for free use
+#
+# Version: %I%
+# Date:    %G% %U%
+# Build:   %b%
+#
+
+# Autoconf doesn't provide a way to set srcdir to the source of the original
+# Makefile.in file, so we have to compensate.
+top_srcdir=@top_srcdir@
+srcdir=@top_srcdir@/handc/cfg/gcadapt/rtgc
+VPATH=@top_srcdir@/handc/cfg/gcadapt/rtgc
+
+top_builddir=@top_builddir@
+
+CFILES=gcclient.c
+PRODUCT=gcadapt.o
+
+include $(top_builddir)/postambl.mak

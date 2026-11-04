@@ -19,7 +19,7 @@
 ;;   [3] = module name for linkage, or #f if none
 
 (define (make-component-descriptors component-modules)
-  (let ((cds (reverse *base-runtime-components*)))
+  (let ((cds '()))
     (for-each
      (lambda (m)
        (if (pair? (proj-names m))
@@ -36,44 +36,36 @@
      component-modules)
     (reverse cds)))
 
-
 (define (create-config-files component-modules)
-  (let ((comps (make-component-descriptors component-modules)))
+  (let ((comps (make-component-descriptors component-modules))
+	(base-comps *base-runtime-components*))
     ;;
-    ;; create the Makefile.in
+    ;; create the subproject makefile addendum
     ;;
     (call-with-dest-output-file
-     "Makefile.in"
+     "modules/subproj.mak"
      (lambda (port)
        (display "##\n" port)
-       (display "## Makefile for RScheme @RSCHEME_BUILD@\n" port)
+       (display "## Subproject makefile fragment\n" port)
        (display "##\n" port)
-
-       (display "SHELL=/bin/sh\n" port)
-       (display "AR=ar ru\n" port)
-       (display "RANLIB=@RANLIB@\n" port)
-       (display "INSTALL_DIR=@prefix@\n" port)
-       (display "FINAL_INSTALL_DIR=@prefix@\n" port)
-
-       (display "@PREAMBLE@\n" port)
-       (display "IFLAGS=-I. -I- -Iinstall/include\n" port)
-
-       (format port "SUBPROJ=~a\n" 
+       (newline port)
+       ;; TODO: SUBPROJECTS is currently unused. Delete?
+       (format port "SUBPROJECTS=~a\n" (join " " (map (lambda (comp)
+							(vector-ref comp 0))
+						      comps)))
+       (newline port)
+       (format port "SUBPROJ_DIRS=~a\n" (join " " (map (lambda (comp)
+						         (vector-ref comp 1))
+						       comps)))
+       (newline port)
+       (format port "SUBPROJ_DEPS=~a\n" 
 	       (join " \\\n\t" 
 		     (map (lambda (comp)
 			    (format #f "~a/~a.o"
 				    (vector-ref comp 1)
 				    (vector-ref comp 2)))
 			  comps)))
-       (format port "SUBPROJECTS=~a\n" (join " " (map (lambda (comp)
-							(vector-ref comp 0))
-						      comps)))
-       (format port "SUBDIRS=~a\n" (join " " (map (lambda (comp)
-						    (vector-ref comp 1))
-						  comps)))
-       (let ((post (locate-src-resource "buildenv/postambl.mak")))
-         (format (current-error-port) "postamble => ~s\n" post)
-         (display (file->string (pathname->string post)) port))
+       (newline port)
        (for-each (lambda (comp)
 		   (format port "~a ~a/~a.o::\n"
 			   (vector-ref comp 0)
@@ -82,18 +74,10 @@
 		   (format port "\tcd ~a && $(MAKE)\n\n" (vector-ref comp 1)))
 		 comps)))
     ;;
-    ;; create release.cfg
-    ;;
-    (call-with-dest-output-file
-     "release.cfg"
-     (lambda (port)
-       (format port "RSCHEME_VERSION=~s\n" *rscheme-version*)
-       (format port "RSCHEME_BUILD=~s\n" *rscheme-build*)))
-    ;;
-    ;; create rlseconf.h's template
+    ;; create rlseconf.h
     ;;
     (call-with-dest-output-header-file
-     "install/include/rscheme/rlseconf.cfg"
+     "install/include/rscheme/rlseconf.h"
      (lambda (port)
        (format port "#define RSCHEME_VERSION ~s\n" *rscheme-version*)
        (format port "#define RSCHEME_BUILD ~s\n" *rscheme-build*)))
@@ -113,6 +97,11 @@
 							 (vector-ref comp 3))))
 					ms))))
 		   comps)
+	 (for-each (lambda (base-comp)
+		     (set! ms (cons (string-append "module_"
+						   (symbol->string base-comp))
+				    ms)))
+		   base-comps)
 	 (for-each (lambda (m)
 		     (format port "extern struct module_descr ~a;\n" m))
 		   ms)
@@ -121,17 +110,6 @@
 		 (join ", \\\n\t" (map (lambda (m)
 					 (string-append "&" m))
 				       ms))))))
-    ;; 
-    ;; create subproj.lst
-    ;;
-    (call-with-dest-output-file
-     "subproj.lst"
-     (lambda (port)
-       (display (join " " (map (lambda (comp)
-				 (vector-ref comp 0))
-			       comps))
-		port)
-       (newline port)))
     (values)))
 
 (define (call-with-dest-output-header-file dest proc)
@@ -148,7 +126,7 @@
 
 (define (call-with-dest-output-file dest proc)
   (call-with-output-path 
-      (append-path *dist-path* (string->file dest))
+      (append-path *dist-build-dir* (string->file dest))
     proc))
 
 (define (join seperator list)
@@ -161,4 +139,3 @@
 		    (seq-add! l item))
 		  (cdr list))
 	(apply string-append (seq->list l)))))
-

@@ -11,7 +11,7 @@
  | Purpose: Core Library Module Definition File
  `------------------------------------------------------------------------|#
 
-((precore "$dist/precore" "$install/resource/modules")
+((precore "$dist/modules/precore" "$install/resource/modules")
  (open primops *scheme*)
  (c-files str2num)
  (h-files strnnum)

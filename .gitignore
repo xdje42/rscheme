@@ -1,1 +1,13 @@
 *~
+
+# In this tree stage0 is not checked in, this is for stage0 development
+# purposes. stage0 is checked into a separate branch, and .gitignore there
+# removes this.
+/stage0/
+
+# We can't ignore all possible build directory names.
+# Just a canonical one.
+/build/
+
+# These directories are created by autoconf.
+autom4te.cache/

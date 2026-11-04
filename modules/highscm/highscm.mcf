@@ -10,7 +10,7 @@
  |
  `------------------------------------------------------------------------|#
 
-((high-scheme "$dist/highscm" "$install/resource/modules")
+((high-scheme "$dist/modules/highscm" "$install/resource/modules")
  (open primops *scheme* objsys low-scheme iolib mathlib corelib tables)
  (files equality procedur promise profiler)
  (files collexn)

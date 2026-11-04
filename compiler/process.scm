@@ -12,8 +12,7 @@
  |
  `------------------------------------------------------------------------|#
 
-
-;; this is called when we are re-awakened from a saved image
+;; this is set when we are re-awakened from a saved image
 
 (define random-delta 0)
 
@@ -39,7 +38,6 @@
 (define *target-dest-dir* #f)
 (define *target-image-dir* #f)
 
-;;;
 ;;;  In `new-build' mode ("--new-build"), rsc generates only the
 ;;;  bare minimum of files:
 ;;;
@@ -57,7 +55,6 @@
 ;;;  In cross-compiling mode, we don't interpret system configuration
 ;;;  settings of the underlying system as applying to the target
 ;;;  environment (e.g., the install directory)
-;;;
 
 (define *native-mode* #f)
 
@@ -70,17 +67,20 @@
     (close-input-port p))
   ;;
   (if (and *native-mode* (getenv "RS_INSTALL_DIR"))
-      (set! *dist-install-resource-dir*
+      (set! *install-resource-dir*
 	    (string->dir (string-append (getenv "RS_INSTALL_DIR")
 					"/resource"))))
-  (add-special-root! "[dist]"
+  (add-special-root! "[src]"
 		     (make <root-dir>
-			   root-name: "[dist]/"
-			   expanded-name: (pathname->string *dist-path*))))
+			   root-name: "[src]/"
+			   expanded-name: (pathname->string *dist-src-dir*)))
+  (add-special-root! "[build]"
+		     (make <root-dir>
+			   root-name: "[build]/"
+			   expanded-name: (pathname->string *dist-build-dir*))))
 
 ;; this is called when we get arguments
 ;; (but it is NOT called when we don't get arguments)
-
 
 (define (process-cmd-line args)
   (if (null? args)
@@ -103,11 +103,11 @@
    ((string=? sw "-exit")
     #f)
    ((string=? sw "-I")
-    (set! *dist-install-resource-dir*
+    (set! *install-resource-dir*
 	  (append-dirs (string->dir (car cdr-args))
 		       (string->dir "resource")))
     (set! *dist-resource-path*
-	  (cons *dist-install-resource-dir*
+	  (cons *install-resource-dir*
 		*dist-resource-path*))
     (reinit-library-path)
     (process-cmd-line (cdr cdr-args)))
@@ -144,10 +144,12 @@
    ((string=? sw "-P")
     ;; package mode, with a new dist dir
     (fluid-let ((*package-mode* #t))
-      (set! *dist-path*
+      ;; FIXME: We're changing *dist-src-dir* but we're not updating all the
+      ;; values derived from it. See, eg, configv.scm.
+      (set! *dist-src-dir*
 	    (string->dir (car cdr-args)))
       (set! *dist-resource-path*
-	    (cons (append-dirs *dist-path* (string->dir "resource"))
+	    (cons (append-dirs *dist-src-dir* (string->dir "resource"))
 		  *dist-resource-path*))
       (reinit-library-path)
       (set! $module-makefile
@@ -160,6 +162,7 @@
    ((string=? sw "--new-build")
     (set! *new-build* #t)
     (process-cmd-line cdr-args))
+   ;; TODO: Can we get rid of make-copy-mode?
    ((string=? sw "-make-recopies")
     (set! *make-copy-mode* #t)
     (process-cmd-line cdr-args))
