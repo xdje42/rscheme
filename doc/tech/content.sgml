@@ -2035,7 +2035,7 @@ RScheme's license, they can do whatever they like!){/para}
           {/title}
           {para}
             {literal}configure{/literal} is a shell script created by the autoconf program based on
-a template {literal}configure.in{/literal}, originally written by Per Bothner and
+a template {literal}configure.ac{/literal}, originally written by Per Bothner and
 somewhat updated by me.{/para}
           {para}This shell script's purpose is to ascertain the configuration of the 
 system on which RS is being built, and create makefiles and other files

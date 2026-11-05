@@ -222,9 +222,9 @@ Since some
 of the objects being mapped are files, we get what appears
 to be a virtual filesystem of metadata published on the web.
 For example, the page describing the file
-{Filename}/handc/configure.in{/Filename} in the filesystem
+{Filename}/handc/configure.ac{/Filename} in the filesystem
 rs-0.7
-is located at {Filename}/fs/rs-0.7/file/handc/configure.in{/Filename}.
+is located at {Filename}/fs/rs-0.7/file/handc/configure.ac{/Filename}.
 It isn't necessary to use file names in this case -- the
 equivalent of inode numbers could be used as well -- but using
 the file names corresponds more closely with the an intuition

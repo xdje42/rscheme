@@ -1,4 +1,4 @@
-configure:	configure.in
+configure:	configure.ac
 	autoconf
 
 install:: configure
