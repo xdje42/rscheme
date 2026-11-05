@@ -65,6 +65,7 @@ cd build
 make bootstrap
 make all
 make rsc
+make install
 
 Without stage0 bootstrap:
 
@@ -74,6 +75,7 @@ cd build
 ../configure --prefix=$HOME/scheme/tmp --disable-bootstrap
 make all
 make rsc
+make install
 
 Building stage0 sources:
 
@@ -87,6 +89,7 @@ make stage0-source
 make install-stage0-source
 # At this point stage0 sources are in the source tree.
 # This is where a build from a distribution begins.
+# See above instructions for building with stage0 bootstrap.
 
 Building stage0:
 
