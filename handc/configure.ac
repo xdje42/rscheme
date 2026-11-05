@@ -1,6 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(subproj.lst)
+AC_INIT
+AC_CONFIG_SRCDIR([subproj.lst])
 
 #
 #  pick up release variables
@@ -28,7 +29,7 @@ AC_PROG_CC
 AC_PROG_CPP
 
 if test "$with_gc" = "rtgc"
-then AC_LANG_CPLUSPLUS
+then AC_LANG([C++])
      AC_PROG_CXX
      AC_PROG_CXXCPP
      gnu_c="$GXX"
@@ -256,7 +257,7 @@ esac
 #............. configure our files ................
 #
 
-AC_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 
 AC_HEADER_DIRENT
 AC_CHECK_HEADERS([db3/db_185.h db/db.h db.h unistd.h alloca.h sys/socket.h sys/select.h sys/time.h execinfo.h])
@@ -290,20 +291,18 @@ dnl Check if the compiler supports computed gotos
 AC_CACHE_CHECK(if computed goto works, rs_cv_computed_goto_works,
 if test "$with_gc" = "rtgc"
 then rs_cv_computed_goto_works=no
-else AC_TRY_COMPILE([],[void *target = &&destination;
-destination: goto *target;],
-rs_cv_computed_goto_works=yes,
-rs_cv_computed_goto_works=no)
+else AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[void *target = &&destination;
+destination: goto *target;]])],[rs_cv_computed_goto_works=yes],[rs_cv_computed_goto_works=no])
 fi
 )
 
 dnl Check to see how to implement fcanget()
 AC_CACHE_CHECK(if can use select in fcanget, rs_cv_fcanget_do_select,
-AC_TRY_COMPILE([#include <sys/time.h>
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/time.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/select.h>
-#include <unistd.h>],[  
+#include <unistd.h>]], [[  
   FILE *strm = stdin;
   fd_set r, w, x;
   int n, fd;
@@ -320,35 +319,25 @@ AC_TRY_COMPILE([#include <sys/time.h>
   FD_SET( fd, &r );
 
   select( fd+1, &r, &w, &x, &nodelay );
-],
-rs_cv_fcanget_do_select=yes,
-rs_cv_fcanget_do_select=no))
+]])],[rs_cv_fcanget_do_select=yes],[rs_cv_fcanget_do_select=no]))
 
 AC_CACHE_CHECK(if FILE* has _IO_read_ptr, rs_cv_fcanget_use_io_read_ptr,
-AC_TRY_COMPILE([#include <stdio.h>],[FILE *strm = stdin;
-int n = strm->_IO_read_end - strm->_IO_read_ptr;],
-rs_cv_fcanget_use_io_read_ptr=yes,
-rs_cv_fcanget_use_io_read_ptr=no))
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>]], [[FILE *strm = stdin;
+int n = strm->_IO_read_end - strm->_IO_read_ptr;]])],[rs_cv_fcanget_use_io_read_ptr=yes],[rs_cv_fcanget_use_io_read_ptr=no]))
 
 AC_CACHE_CHECK(if FILE* has _cnt, rs_cv_fcanget_use_cnt,
-AC_TRY_COMPILE([#include <stdio.h>],[FILE *strm = stdin;
-int n = strm->_cnt;],
-rs_cv_fcanget_use_cnt=yes,
-rs_cv_fcanget_use_cnt=no))
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>]], [[FILE *strm = stdin;
+int n = strm->_cnt;]])],[rs_cv_fcanget_use_cnt=yes],[rs_cv_fcanget_use_cnt=no]))
 
 AC_CACHE_CHECK(if FILE* has _r, rs_cv_fcanget_use_r,
-AC_TRY_COMPILE([#include <stdio.h>],[FILE *strm = stdin;
-int n = strm->_r;],
-rs_cv_fcanget_use_r=yes,
-rs_cv_fcanget_use_r=no))
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>]], [[FILE *strm = stdin;
+int n = strm->_r;]])],[rs_cv_fcanget_use_r=yes],[rs_cv_fcanget_use_r=no]))
 
 
 dnl Check if we can use the Pentium rdtsc instruction
 AC_CACHE_CHECK(if Pentium RDTSC access works, rs_cv_pentium_rdtsc,
-AC_TRY_COMPILE([],[unsigned long long int t;
-   __asm__ volatile( ".byte 0x0f,0x31" : "=A"(t) );],
-rs_cv_pentium_rdtsc=yes,
-rs_cv_pentium_rdtsc=no))
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[unsigned long long int t;
+   __asm__ volatile( ".byte 0x0f,0x31" : "=A"(t) );]])],[rs_cv_pentium_rdtsc=yes],[rs_cv_pentium_rdtsc=no]))
 
 dnl Check if Berkeley db is available
 
@@ -365,10 +354,10 @@ fi
 
 if test "$db_hh"
 then AC_CACHE_CHECK(if Berkeley db, rs_cv_db_works,
-     AC_TRY_COMPILE([#include <${db_hh}>
+     AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <${db_hh}>
 #include <stdio.h>
 #include <sys/types.h>
-#include <fcntl.h>],[
+#include <fcntl.h>]], [[
 DB *db;
 DBT k, v;
   db = dbopen( "test.db", O_CREAT|O_TRUNC, 0666, DB_BTREE, NULL );
@@ -377,9 +366,7 @@ DBT k, v;
   v.data = "there";
   v.size = 5;
   db->put( db, &k, &v, R_NOOVERWRITE );
-],
-rs_cv_db_works=yes,
-rs_cv_db_works=no))
+]])],[rs_cv_db_works=yes],[rs_cv_db_works=no]))
 fi
 
 if test "$rs_cv_db_works" = yes
@@ -387,17 +374,11 @@ then default_pkgs="$default_pkgs db"
 fi
 
 AC_CACHE_CHECK(if ntoh protos are ok, rs_cv_ntoh_proto_ok,
-AC_TRY_COMPILE([#include <sys/types.h>],
-               [extern unsigned long int ntohl( unsigned long int );
-                extern unsigned short int ntohs( unsigned short int );],
-               rs_cv_ntoh_proto_ok=yes,
-               rs_cv_ntoh_proto_ok=no))
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>]], [[extern unsigned long int ntohl( unsigned long int );
+                extern unsigned short int ntohs( unsigned short int );]])],[rs_cv_ntoh_proto_ok=yes],[rs_cv_ntoh_proto_ok=no]))
 
 AC_CACHE_CHECK(if <netinet/in.h> has ntoh protos, rs_cv_netinet_has_ntoh,
-AC_TRY_COMPILE([#include <netinet/in.h>],
-               [return ntohl(2);],
-               rs_cv_netinet_has_ntoh=yes,
-               rs_cv_netinet_has_ntoh=no))
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <netinet/in.h>]], [[return ntohl(2);]])],[rs_cv_netinet_has_ntoh=yes],[rs_cv_netinet_has_ntoh=no]))
 
 if test "$rs_cv_ntoh_proto_ok" = no; then
   AC_DEFINE(NTOH_PROTO_OK, 0)
@@ -432,15 +413,13 @@ fi
 
 dnl Check the return type of sprintf.  Kind of ugly ...
 AC_CACHE_CHECK(sprintf returns int, rs_cv_sprintf_returns_int,
-AC_TRY_COMPILE([#include <stdio.h>
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>
 changequote(,)
 changequote([,])dnl
-],[changequote(<,>)dnl
+]], [[changequote(<,>)dnl
 char buf[20]; 
 changequote([,])dnl
-return (buf + sprintf(buf, "%d", 34))-buf;],
-rs_cv_sprintf_returns_int=yes,
-rs_cv_sprintf_returns_int=no))
+return (buf + sprintf(buf, "%d", 34))-buf;]])],[rs_cv_sprintf_returns_int=yes],[rs_cv_sprintf_returns_int=no]))
 
 if test $rs_cv_sprintf_returns_int = no; then
   AC_DEFINE(SPRINTF_RETURNS_INT, 0)
@@ -448,15 +427,13 @@ fi
 
 dnl Check to see if sigset_t is available (POSIX signals)
 AC_CACHE_CHECK(for POSIX signals, rs_cv_posix_signals,
-AC_TRY_COMPILE([#include <signal.h>
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <signal.h>
 changequote(,)
 changequote([,])dnl
-],[sigset_t new_sig, old_sig;
+]], [[sigset_t new_sig, old_sig;
 sigfillset( &new_sig );
 sigemptyset( &old_sig );
-sigprocmask( SIG_BLOCK, &new_sig, &old_sig )],
-rs_cv_posix_signals=yes,
-rs_cv_posix_signals=no))
+sigprocmask( SIG_BLOCK, &new_sig, &old_sig )]])],[rs_cv_posix_signals=yes],[rs_cv_posix_signals=no]))
 if test $rs_cv_posix_signals = no; then
   AC_DEFINE(USE_POSIX_SIGNALS, 0)
 fi
@@ -513,7 +490,8 @@ LD_FLAGS=-r
 LDX=$LDX_FLAGS
 EOF
 
-AC_OUTPUT(Makefile hasht/Makefile)
+AC_CONFIG_FILES([Makefile hasht/Makefile])
+AC_OUTPUT
 
 #
 # interpolate the INSTALL_DIR into the release config file
@@ -544,7 +522,7 @@ choose() {
         exit 1
    fi
    mkdir $set
-dnl #Should use AC_LINK_FILES, but does not work in a loop or function.
+dnl #Should use autoconf's LINK_FILES, but does not work in a loop or function.
    if $uselinks
    then for i in cfg/$set/$choice/* 
         do ln -s ../$i $set/`basename $i`

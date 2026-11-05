@@ -1,6 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(README)
+AC_INIT
+AC_CONFIG_SRCDIR([README])
 
 AC_PROG_CC()
 
@@ -25,4 +26,5 @@ echo "install directory... ($install_dir)"
 # AC_CONFIG_SUBDIRS( graphics/gd )
 (cd graphics/gd ; ./configure)
 
-AC_OUTPUT(Makefile)
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT

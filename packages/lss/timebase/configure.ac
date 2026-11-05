@@ -1,6 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(timebase.h)
+AC_INIT
+AC_CONFIG_SRCDIR([timebase.h])
 
 AC_SUBST(READ_C)
 AC_SUBST(READ_S)
@@ -33,5 +34,6 @@ else if test -f "$ARCH"/readtime.c
      fi
 fi
 
-AC_CONFIG_HEADER(config.h)
-AC_OUTPUT(Makefile)
+AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
