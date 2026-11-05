@@ -9,17 +9,20 @@
 # Build:   %b%
 #-------------------------------------------------------------------------#
 
+top_srcdir=@top_srcdir@
+srcdir=@top_srcdir@/handc/hasht
+VPATH=@top_srcdir@/handc/hasht
+
+top_builddir=@top_builddir@
+
 CFILES=hashmain.c htsplit.c hashfn.c generic.c crchash.c tblcopy.c
 PRODUCT=hasht.o
 
-@POSTAMBLE@
+include $(top_builddir)/postambl.mak
 
 generic.ci: generic0.c generic.c1
 	rm -f generic.ci
 	umask 222 ; @CPP@ generic0.c | \
 	sed -e '/^$$/d' -e '/^# [0-9]/d' > generic.ci
-
-clean::
-	rm -f *.o
 
 generic.o: generic.c generic.ci

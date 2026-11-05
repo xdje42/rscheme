@@ -1,5 +1,4 @@
 
-#
 default:: lssctl
 
 srcdir=@srcdir@
@@ -13,6 +12,7 @@ INSTALL_LIB=$(INSTALL_DIR)/lib
 INSTALL_INCLUDE=$(INSTALL_DIR)/include/rscheme/pkgs/lss
 
 CC=@CC@
+
 CFLAGS=-g -I. -I$(RSCHEME_DIR)/include
 
 #

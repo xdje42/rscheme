@@ -10,7 +10,7 @@
  |
  `------------------------------------------------------------------------|#
 
-((objsys "$dist/objsys" "$install/resource/modules")
+((objsys "$dist/modules/objsys" "$install/resource/modules")
  (open primops *scheme* low-scheme corelib)
  (files object metaobj genericf nextmeth makeinst getnset methods)
  (export :local))

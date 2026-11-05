@@ -1,0 +1,101 @@
+
+The old way:
+To build from scratch via a stage0 bootstrap:
+
+rm -rf src stage0
+rm -f handc.list *.stamp
+make BUILD_ID='"v0.7.3.5-b1, asis"' base_system
+
+### Start of bootstrap additions ###
+
+make ship
+rm *.stamp
+
+# The above is used to create the bootstrap tree.
+# The build then continues using stage0 to build stage1 and then rs.
+
+make stage1
+
+### End of bootstrap additions ###
+
+cd src
+# --enable-full-numeric-tower gets linker errors
+rm -rf $HOME/scheme/tmp
+./configure --prefix=$HOME/scheme/tmp
+make all
+
+make rsc
+
+# lss needs to be built before rstore
+make packages PACKAGES="general fasl syscalls unixm lss rstore calendar sets threads"
+
+# Requires porting packages/fasl/ldcode.c to aarch64.
+#make fasl_shell
+
+
+The old way:
+To build from scratch using a previously installed copy of Rscheme:
+
+rm -rf src stage0
+rm -f handc.list *.stamp
+make BUILD_ID='"v0.7.3.5-b1, asis"' base_system
+
+cd src
+# --enable-full-numeric-tower gets linker errors
+./configure --prefix=$HOME/scheme/tmp
+make all
+
+make rsc
+
+# lss needs to be built before rstore
+RS=$HOME/scheme/tmp/bin/rs RSC=$HOME/scheme/tmp/bin/rsc make packages PACKAGES="general fasl syscalls unixm lss rstore calendar sets threads"
+
+# Requires porting packages/fasl/ldcode.c to aarch64.
+#make fasl_shell
+
+
+Building the new way:
+
+With stage0 bootstrap:
+
+rm -rf build
+mkdir build
+cd build
+../configure --prefix=$HOME/scheme/tmp --enable-bootstrap
+make bootstrap
+make all
+make rsc
+make install
+
+Without stage0 bootstrap:
+
+rm -rf build
+mkdir build
+cd build
+../configure --prefix=$HOME/scheme/tmp --disable-bootstrap
+make all
+make rsc
+make install
+
+Building stage0 sources:
+
+rm -rf build
+mkdir build
+cd build
+../configure --prefix=$HOME/scheme/tmp --disable-bootstrap --without-packages
+make base-system
+make stage0-source
+# At this point the build tree is unusable except for install-stage0-source.
+make install-stage0-source
+# At this point stage0 sources are in the source tree.
+# This is where a build from a distribution begins.
+# See above instructions for building with stage0 bootstrap.
+
+Building stage0:
+
+rm -rf build
+mkdir build
+cd build
+../configure --prefix=$HOME/scheme/tmp --enable-stage0-build --disable-bootstrap --without-packages
+make build-stage0
+

@@ -1,0 +1,90 @@
+##
+## Makefile for rscheme/handc
+##
+
+SHELL=/bin/sh
+
+top_srcdir=@top_srcdir@
+srcdir=@srcdir@
+VPATH=@srcdir@
+
+top_builddir=@top_builddir@
+
+LIBHANDC=libhandc.a
+
+# List of our subdirs
+SUBPROJ_DIRS = \
+	runtime hasht heapi loadboot unstub gc gcadapt rdln bci dfltmain
+
+# List of resulting .o files from each subdir.
+SUBPROJ_DEPS = \
+	runtime/runtime.o \
+	hasht/hasht.o \
+	heapi/heapi.o \
+	loadboot/ldboot.o \
+	unstub/unstb.o \
+	gc/xgc.o \
+	gcadapt/gcadapt.o \
+	rdln/rdln.o \
+	bci/bci.o \
+	dfltmain/dfltmain.o
+
+include $(top_builddir)/build-config.mak
+
+default:
+	@echo "There is no default target."
+	@echo "See how the parent Makefile invokes us."
+
+# subproj-includes must be made first.
+$(LIBHANDC) all: $(SUBPROJ_DEPS)
+	@# All the object files have already been added to libhandc.
+
+subproj-includes::
+	for subdir in $(SUBPROJ_DIRS) ; \
+	do \
+	  if test -d $$subdir ; then \
+	    echo "Copying headers for $$subdir" ; \
+	    (cd $$subdir ; $(MAKE) install-headers) ; \
+	  fi ; \
+	done
+
+Makefile: Makefile.in $(top_builddir)/config.status
+	cd $(top_builddir) && ./config.status handc/Makefile
+
+clean::
+	for i in $(SUBPROJ_DIRS) ; do (cd $$i && $(MAKE) clean) ; done
+	rm -f $(LIBHANDC)
+
+distclean:: clean
+	for i in $(SUBPROJ_DIRS) ; do (cd $$i && $(MAKE) distclean) ; done
+	rm -f Makefile
+
+runtime runtime/runtime.o::
+	cd runtime && $(MAKE)
+
+hasht hasht/hasht.o::
+	cd hasht && $(MAKE)
+
+heapi heapi/heapi.o::
+	cd heapi && $(MAKE)
+
+loadboot loadboot/ldboot.o::
+	cd loadboot && $(MAKE)
+
+unstub unstub/unstb.o::
+	cd unstub && $(MAKE)
+
+gc gc/xgc.o::
+	cd gc && $(MAKE)
+
+gcadapt gcadapt/gcadapt.o::
+	cd gcadapt && $(MAKE)
+
+rdln rdln/rdln.o::
+	cd rdln && $(MAKE)
+
+bci bci/bci.o::
+	cd bci && $(MAKE)
+
+dfltmain dfltmain/dfltmain.o::
+	cd dfltmain && $(MAKE)

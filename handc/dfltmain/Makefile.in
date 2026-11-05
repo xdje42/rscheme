@@ -1,0 +1,21 @@
+#
+# File:    handc/dfltmain/Makefile
+#
+#          Copyright (C)1995 Donovan Kolbly <donovan@tkg.com>
+#          as part of the RScheme project, licensed for free use
+#
+# Version: %I%
+# Date:    %G% %U%
+# Build:   %b%
+#
+
+top_srcdir=@top_srcdir@
+srcdir=@top_srcdir@/handc/dfltmain
+VPATH=@top_srcdir@/handc/dfltmain
+
+top_builddir=@top_builddir@
+
+CFILES=main.c findimag.c
+PRODUCT=dfltmain.o
+
+include $(top_builddir)/postambl.mak

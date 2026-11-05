@@ -10,7 +10,7 @@
  |
  `------------------------------------------------------------------------|#
 
-((layer "$dist/layer" "$install/resource/modules")
+((layer "$dist/modules/layer" "$install/resource/modules")
  (open corelib (primops prefix: "primop-"))
  (files layer)
  (export :local))

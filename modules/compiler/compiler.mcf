@@ -13,7 +13,7 @@
 
 
 
-((compiler "$dist/compiler" "$install/resource/modules")
+((compiler "$dist/modules/compiler" "$install/resource/modules")
  (open primops *scheme* iolib low-scheme objsys mathlib tables corelib)
  (open mlink)
 

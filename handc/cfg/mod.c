@@ -29,7 +29,7 @@
 */
 
 
-main()
+int main()
 {
   int a, b;
 

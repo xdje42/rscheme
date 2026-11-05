@@ -1,0 +1,25 @@
+#
+# File:    handc/heapi/Makefile
+#
+#          Copyright (C)1997 Donovan Kolbly <d.kolbly@rosette.com>
+#          as part of the RScheme project, licensed for free use
+#
+# Version: %I%
+# Date:    %G% %U%
+# Build:   %b%
+#
+
+top_srcdir=@top_srcdir@
+srcdir=@top_srcdir@/handc/heapi
+VPATH=@top_srcdir@/handc/heapi
+
+top_builddir=@top_builddir@
+
+CFILES=loadimag.c savewrit.c savetrav.c saveq.c mapf.c
+PRODUCT=heapi.o
+
+include $(top_builddir)/postambl.mak
+
+distclean::
+	@# This is a symlink created by configure.
+	rm -f mapf.c

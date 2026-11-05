@@ -14,6 +14,7 @@
 
 
 ;; install a hook in the rs-0.6 paths module
+;; FIXME: Where is other-special-root defined?
 
 (set! other-special-root
       (lambda (str)
@@ -21,6 +22,7 @@
 	    $dist-root
 	    #f)))
 
+;; FIXME: There is both *dist-src-dir* and *dist-build-dir*.
 (define $dist-root (make <root-dir> 
 			 root-name: "[dist]/"
-			 expanded-name: (pathname->string *dist-path*)))
+			 expanded-name: (pathname->string *dist-src-dir*)))

@@ -1,5 +1,4 @@
 
-#
 default:: librstore.a
 
 srcdir=@srcdir@
@@ -7,15 +6,13 @@ VPATH=@srcdir@
 
 RSCHEME_DIR=@rs_prefix@
 
+# Note: INSTALL_DIR is also needed by preamble.mak.
 INSTALL_DIR=@rs_prefix@
 INSTALL_BIN=$(INSTALL_DIR)/bin
 INSTALL_LIB=$(INSTALL_DIR)/lib
 INSTALL_INCLUDE=$(INSTALL_DIR)/include/rscheme/pkgs/rstore
 
 CC=@CC@
-
-#  [used by preamble.mak]
-INSTALL_DIR=$(RSCHEME_DIR)
 
 XCFLAGS= -I.
 
@@ -80,8 +77,6 @@ $(INSTALL_INCLUDE):
 	mkdir -p $(INSTALL_INCLUDE)
 
 #
-
-#
 #  --- the RScheme side of things ---
 #
 
@@ -129,5 +124,3 @@ distclean:: clean
 	rm -f $(EXTRA_FILES)
 	cd lru_model ; $(MAKE) distclean
 	cd old_model ; $(MAKE) distclean
-
-

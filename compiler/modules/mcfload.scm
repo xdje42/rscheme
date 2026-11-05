@@ -73,17 +73,21 @@
   (let* ((envt (make-top-level-contour))
 	 (m (make <module> 
 		  name: m-name
-		  properties: (list (cons 'directory 
-					  (pathname->os-path 
-					   (dir-from-to
-					    *dist-path*
-					    m-dest-dir))))
+		  properties: (list
+			       (cons 'directory 
+				     (pathname->os-path 
+				      (dir-from-to
+				       (append-dirs *dist-build-dir*
+						    (string->dir "modules"))
+				       m-dest-dir))))
 		  module-exports: (make-table eq? symbol->hash)
-		  link-names: (list (remove-specials 
+		  link-names: (list (remove-specials
 				     (symbol->string m-name)))
 		  top-level-envt: envt))
 	 (bcx (make <build-context>
 		    name: m-name
+		    top-src-dir: *dist-src-dir*
+		    top-build-dir: *dist-build-dir*
 		    dest-dir: m-dest-dir
 		    image-dest-dir: m-image-dir
 		    building: m)))

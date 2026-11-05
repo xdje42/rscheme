@@ -1,0 +1,12 @@
+#! /bin/sh
+
+comp="$1"
+img="$2"
+cfg="$3"
+
+img_abs=`cd $img ; /bin/pwd`
+
+inflag="--in usual-inlines"
+
+# FIXME: Where did $sis come from?
+$RS $inflag -e "$sis" $cfg $comp/mki.scm -c $img/rsc.img

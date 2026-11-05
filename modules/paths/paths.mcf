@@ -10,7 +10,7 @@
  |
  `------------------------------------------------------------------------|#
 
-((paths "$dist/paths" "$install/resource/modules")
+((paths "$dist/modules/paths" "$install/resource/modules")
  (open primops *scheme* objsys low-scheme corelib)
  (files classes rootpath filepath dirpath)
  (files locate parse filesys)

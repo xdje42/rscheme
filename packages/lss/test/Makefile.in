@@ -1,3 +1,7 @@
+
+srcdir=@srcdir@
+VPATH=@srcdir@
+
 clean::
 	rm -f lss.o lssctl.o lssctl 
 	rm -f foo foo.log fox fox.log foy foy.log
@@ -74,4 +78,3 @@ testz:: $(ZDATA)
 # compute best substrings from a substring log:
 # zcat zstore-substr.out | grep -v '^;' | sort | uniq --count \
 # | awk '{ print (NF-1) * $1, NF, $0 }' | sort -n > zstore-substr.res 
-

@@ -10,7 +10,7 @@
  |
  `------------------------------------------------------------------------|#
 
-((tables "$dist/tables" "$install/resource/modules")
+((tables "$dist/modules/tables" "$install/resource/modules")
  (require-c-header "<rscheme/hashmain.h>")
  (open primops *scheme* low-scheme objsys corelib mathlib)
  (files classes misc

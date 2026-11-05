@@ -17,6 +17,7 @@
 #include <rscheme/scheme.h>
 #include <rscheme/api.h>
 
+#include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #ifdef __NeXT__

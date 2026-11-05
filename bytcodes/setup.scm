@@ -14,6 +14,8 @@
 ;;
 ;; load and process bytecodes
 ;;
+;; Note: This file is unused during normal builds.
+;;
 
 (load "process.scm")
 (process-defs-file)

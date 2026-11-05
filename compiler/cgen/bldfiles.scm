@@ -65,12 +65,12 @@
 	(private-interface-file bcx)
       (lambda (port)
 	(write-private-interface bcx port roots-file)))
-    
+
     (call-with-header-output-file
 	(public-interface-file bcx)
       (lambda (port)
 	(write-public-interface bcx port)))
-    
+
     (call-with-output-file
 	(pathname->string (make <file-name>
 				filename: (makefile-name bcx)
@@ -87,14 +87,17 @@
 	(display-disclaimer port)
 	(format port "\n#ifndef _H_~a\n" guard)
 	(format port "#define _H_~a\n\n" guard)
+        (format port "// WARNING: Do not edit, this file is machine generated.\n\n")
 	(proc port)
-	(format port "#endif /* _H_~a */\n" guard)))))
+	(format port "\n#endif /* _H_~a */\n" guard)))))
 
 (define (write-makefile (bcx <build-context>) port)
  (let ((m (building bcx))
        (usr-iflags (user-inc-path bcx))
        (sys-iflags (system-inc-path bcx)))
   (write-char #\# port)
+  ;; N.B. The makefile can't have any configure-time dependent paths or other
+  ;; configuration data. It is checked in with the stage0 directory.
   (center-* port "Makefile for Module `~a'" (link-name m))
   (format port "#\n")
   (format port 
@@ -102,6 +105,20 @@
 	  *rscheme-build*)
   (format port "# module `~a'\n" (name bcx))
   (format port "#\n")
+  (format port "# WARNING: Do not edit, this file is machine generated.\n")
+  (newline port)
+  ;; Generated C source files get put in the same directory as the Makefile.
+  ;; For stage0 the generated sources are in the source tree, not the build
+  ;; tree. The path is updated when the Makefile is copied from the stage0
+  ;; source tree to the build tree at configure time.
+  (format port "srcdir=.\n")
+  (format port "VPATH=.\n")
+  (newline port)
+  ;; We impose a fixed structure to the build tree so that we can find
+  ;; configure-generated makefile fragments without encoding configure-time
+  ;; specific data.
+  (format port "top_builddir=../..\n")
+  (newline port)
   (format port "CFILES=")
   (for-each (lambda (f)
 	      (format port " ~a.c" f))
@@ -132,7 +149,8 @@
 	(format port "MIFNAME=~a\n" (base-filename bcx))))
   (newline port)
   ;; the $module-makefile winds up in install/resource/buildenv/module.mak,
-  ;; although it is in src/... before the base system gets installed
+  ;; although it is in $top_build_dir/... before the base system gets installed
+  (format port "IS_MODULE=yes\n")
   (format port "include ~a\n" $module-makefile)
   (if *make-copy-mode*
       (for-each (lambda (copied-file)
@@ -147,6 +165,7 @@
 ;; the source files.  Can be enabled with the "-make-recopies" flag
 ;; 
 
+;; TODO: Can we get rid of make-copy-mode?
 (define *make-copy-mode* #f)
 
 (define (write-public-interface (bcx <build-context>) port)

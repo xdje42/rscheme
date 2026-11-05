@@ -121,12 +121,14 @@ Appendix A. Stage1 Options
 
 The stage1 build starts with a configuration step; if configure is
 unable to determine the type of your system, or requires other flags,
-you can set those options via the CONFIG_OPTS makefile flag.
+you can set those options via the STAGE0_CONFIG_OPTS makefile flag.
+Stage1 is built with stage0, the latter containing precompiled Rscheme
+code so that an Rscheme implementation isn't needed for the build.
 
 For example, in order to build on Windows NT with the GNU Win32 tools,
 use:
 
-    $ make CONFIG_OPTS="--host=i386-gnuwin32" stage1
+    $ make STAGE0_CONFIG_OPTS="--host=i386-gnuwin32" stage1
 
 (which is not to imply that the WindowsNT build works, but it at
 least gets most of the way :-))
@@ -134,7 +136,7 @@ least gets most of the way :-))
 
 For another example, Mac OS X wants:
 
-    $ make CONFIG_OPTS="--host=ppc-rhapsody" stage1
+    $ make STAGE0_CONFIG_OPTS="--host=ppc-rhapsody" stage1
 
 
 -- Donovan Kolbly                       RScheme Development Group
