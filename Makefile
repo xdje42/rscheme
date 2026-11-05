@@ -94,7 +94,7 @@ $(TARGET_DIR)/tmp/system.bas: $(MODULES)
 #  autoconf
 #
 
-$(TARGET_DIR)/configure: $(SRC_DIR)/handc/configure.in
+$(TARGET_DIR)/configure: $(SRC_DIR)/handc/configure.ac
 	cd $(TARGET_DIR) ; autoconf
 
 #

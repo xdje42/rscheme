@@ -1,9 +1,9 @@
 default:: configure timebase/configure
 
-configure: configure.in
+configure: configure.ac
 	autoconf
 
-timebase/configure: timebase/configure.in
+timebase/configure: timebase/configure.ac
 	cd timebase && autoconf
 
 install::	configure
