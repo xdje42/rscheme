@@ -1,0 +1,7 @@
+#ifndef _H_RSCHEME_RLSECONF
+#define _H_RSCHEME_RLSECONF
+
+#define RSCHEME_VERSION "0.7.3.5"
+#define RSCHEME_BUILD "Dev Build, 2026-11-04 19:40"
+#endif /* _H_RSCHEME_RLSECONF */
+
