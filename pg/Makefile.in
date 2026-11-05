@@ -12,6 +12,9 @@
 #	   (invoked from make.pkg, though)
 #-------------------------------------------------------------------------#
 
+srcdir=@srcdir@
+VPATH=@srcdir@
+
 RSCHEME_DIR=@rs_prefix@
 INSTALL=@rs_prefix@
 

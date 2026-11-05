@@ -2,6 +2,9 @@
 #
 default:: lssctl
 
+srcdir=@srcdir@
+VPATH=@srcdir@
+
 RSCHEME_DIR=@rs_prefix@
 
 INSTALL=@rs_prefix@

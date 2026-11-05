@@ -1,6 +1,9 @@
 
 default:: all
 
+srcdir=@srcdir@
+VPATH=@srcdir@
+
 RSCHEME_DIR=@rs_prefix@
 # this is really RScheme's install dir
 INSTALL_DIR=$(RSCHEME_DIR)

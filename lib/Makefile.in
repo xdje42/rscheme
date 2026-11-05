@@ -1,4 +1,7 @@
 
+srcdir=@srcdir@
+VPATH=@srcdir@
+
 RS=@rs@
 INSTALL_DIR=@install_dir@
 PRODUCT=mrs.fas

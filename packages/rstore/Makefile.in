@@ -2,8 +2,10 @@
 #
 default:: librstore.a
 
-RSCHEME_DIR=@rs_prefix@
+srcdir=@srcdir@
+VPATH=@srcdir@
 
+RSCHEME_DIR=@rs_prefix@
 
 INSTALL=@rs_prefix@
 INSTALL_BIN=$(INSTALL)/bin
