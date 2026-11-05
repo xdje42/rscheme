@@ -7,10 +7,10 @@ VPATH=@srcdir@
 
 RSCHEME_DIR=@rs_prefix@
 
-INSTALL=@rs_prefix@
-INSTALL_BIN=$(INSTALL)/bin
-INSTALL_LIB=$(INSTALL)/lib
-INSTALL_INCLUDE=$(INSTALL)/include/rscheme/pkgs/rstore
+INSTALL_DIR=@rs_prefix@
+INSTALL_BIN=$(INSTALL_DIR)/bin
+INSTALL_LIB=$(INSTALL_DIR)/lib
+INSTALL_INCLUDE=$(INSTALL_DIR)/include/rscheme/pkgs/rstore
 
 CC=@CC@
 
@@ -100,13 +100,13 @@ $(M_OUT): $(SCM_FILES)
 
 $(M_PROD): $(M_OUT)
 # need to be able to do this w/o having installed base code
-	$(MAKE) -f $(M_MAKE) INSTALL_DIR=$(INSTALL)
+	$(MAKE) -f $(M_MAKE) INSTALL_DIR=$(INSTALL_DIR)
 
 scheme:: $(M_MAKE)
 make-scheme:: $(M_PROD)
 
 install-scheme::
-	$(MAKE) -f $(M_MAKE) INSTALL_DIR=$(INSTALL) install
+	$(MAKE) -f $(M_MAKE) INSTALL_DIR=$(INSTALL_DIR) install
 
 all:: $(PRODUCT) install scheme make-scheme install-scheme
 
