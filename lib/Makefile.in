@@ -56,7 +56,7 @@ ship::
 	cd $$dir && \
 	cvs -Q -l checkout dev && \
 	(cd dev ; autoconf) && \
-        (cd dev/gui/app/dv ; make about.tiff) && \
+        (cd dev/gui/app/dv ; $(MAKE) about.tiff) && \
 	rm -rf `find . -type d -name CVS -print` && \
 	mv dev mr-$(VERSION) && \
 	tar -czf /u/ftp/priv/mr-$(VERSION).tar.gz mr-$(VERSION) && \
