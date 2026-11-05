@@ -71,7 +71,6 @@
 			(if in-directory
 			    (cons "." other-local-include-dirs)
 			    other-local-include-dirs))
-		 "-I-"
 		 ,@(map (lambda (dir)
 			  (string-append "-I" dir))
 			(append *include-dirs* other-include-dirs))
