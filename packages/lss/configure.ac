@@ -1,6 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(lsspriv.h)
+AC_INIT
+AC_CONFIG_SRCDIR([lsspriv.h])
 
 AC_SUBST(rs_prefix)
 AC_SUBST(prefix)
@@ -96,6 +97,7 @@ cat >> ziplist.ci << EOF
 
 EOF
 
-AC_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SUBDIRS(timebase)
-AC_OUTPUT(Makefile glue.scm)
+AC_CONFIG_FILES([Makefile glue.scm])
+AC_OUTPUT

@@ -1,6 +1,7 @@
 dnl Process this file with autoconf to produce a configure script. -*-sh-*-
 
-AC_INIT(swizzler.h)
+AC_INIT
+AC_CONFIG_SRCDIR([swizzler.h])
 
 AC_SUBST(rs_prefix)
 AC_SUBST(prefix)
@@ -24,5 +25,6 @@ fi
 
 echo "RScheme `$rs --version` in $rs_prefix"
 
-AC_CONFIG_HEADER(config.h)
-AC_OUTPUT(Makefile lru_model/Makefile old_model/Makefile)
+AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_FILES([Makefile lru_model/Makefile old_model/Makefile])
+AC_OUTPUT

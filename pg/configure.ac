@@ -1,6 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(gettuple.c)
+AC_INIT
+AC_CONFIG_SRCDIR([gettuple.c])
 
 pg_include=NONE
 pg_lib=NONE
@@ -57,4 +58,5 @@ then if test -f /usr/lib/libpq.a
 fi
 more_libs="-lcrypt"
 
-AC_OUTPUT(Makefile)
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
