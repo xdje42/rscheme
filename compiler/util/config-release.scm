@@ -56,7 +56,7 @@
        (display "FINAL_INSTALL_DIR=@prefix@\n" port)
 
        (display "@PREAMBLE@\n" port)
-       (display "IFLAGS=-I. -I- -Iinstall/include\n" port)
+       (display "IFLAGS=-I. -Iinstall/include\n" port)
 
        (format port "SUBPROJ=~a\n" 
 	       (join " \\\n\t" 

@@ -483,7 +483,7 @@ fi
 
 cat > preamble.mak <<EOF
 # This is the preamble.mak used when building the base system
-IFLAGS=-I- -I. -I../install/include
+IFLAGS=-I. -I../install/include
 CFLAGS=\$(CFLAGS1) \$(IFLAGS)
 LD=$LD
 LD_FLAGS=-r
@@ -553,7 +553,7 @@ _mkdir install/resource/buildenv
 cat > install/resource/buildenv/preamble.mak <<EOF
 # This is the preamble.mak used when building packages and other addons
 # INSTALL_DIR=$INSTALL_DIR
-IFLAGS=\$(USR_IFLAGS) -I. -I- \$(SYS_IFLAGS) -I\$(INSTALL_DIR)/include
+IFLAGS=\$(USR_IFLAGS) -I. \$(SYS_IFLAGS) -I\$(INSTALL_DIR)/include
 SUBPROJ_LD=$LD
 SUBPROJ_LD_FLAGS=-r
 LDX_FLAGS=-L\$(INSTALL_DIR)/lib -lrs $LDX_FLAGS

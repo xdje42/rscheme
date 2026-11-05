@@ -128,9 +128,9 @@
 	(start-c-compiler 
          cf outf
          other-c-flags: (get-prop 'other-c-flags:)
-         ;; -IXXX -I- ...
+         ;; -IXXX -I- ... # TODO: -I- is gone, can this be simplified?
          other-local-include-dirs: (get-prop 'other-local-include-dirs:)
-         ;; ... -I- -IXXX
+         ;; ... -I- -IXXX # TODO: -I- is gone, can this be simplified?
          other-include-dirs: (get-prop 'other-include-dirs:)
          partial: #t
          in-directory: dir))
