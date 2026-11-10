@@ -56,7 +56,7 @@ int rscheme_std_main( int argc, const char **argv,
 		      const char *default_image )
 {
   obj start, args, rc;
-  const char *system_file = NULL;
+  const char *system_image = NULL;
   int i = 1;
   rs_bool verbose = YES;
   rs_bool is_script = NO;
@@ -74,7 +74,7 @@ int rscheme_std_main( int argc, const char **argv,
 	{
 	  if (i+1 >= argc)
 	    goto miss_arg;
-	  system_file = argv[++i];
+	  system_image = argv[++i];
 	}
       else if (strcmp(argv[i],"--version") == 0)
 	{
@@ -90,7 +90,7 @@ int rscheme_std_main( int argc, const char **argv,
 	{
 	  if (i+1 >= argc)
 	    goto miss_arg;
-	  system_file = argv[++i];
+	  system_image = argv[++i];
 	  verbose = NO;
 	}
       else if (strcmp(argv[i],"-bcitrace") == 0)
@@ -128,22 +128,24 @@ int rscheme_std_main( int argc, const char **argv,
       else
 	break;
     }
-  if (!system_file)
-    system_file = find_system_image( argv[0], default_image );
 
-  if (!system_file)
+  if (!system_image)
+    system_image = find_system_image( argv[0], default_image );
+  if (!system_image)
     {
       fprintf( stderr, "%s: could not find system image\n", argv[0] );
       return 1;			/* boot failed */
     }
+  if (verbose)
+    printf("Using system image: %s\n", system_image);
 
-  start = init_scheme( argc, argv, system_file, 
+  start = init_scheme( argc, argv, system_image, 
 		      verbose,
 		      modules );
   if (EQ(start,FALSE_OBJ))
     {
       fprintf( stderr, "%s: initialization from %s failed\n", 
-	      argv[0], system_file );
+	      argv[0], system_image );
       return 1;
     }
 
