@@ -251,5 +251,5 @@ modules, you simply need to make sure the directory in which the
 module is installed is in RScheme's search path for dynamically linked
 modules{footnote}{Para}The default search path for modules, accessible
 by the {Phrase Role="var"}module-search-path{/Phrase} function in the {UserInput/mlink/ module,
-is the current directory, followed by {Filename}[install]/resource/modules{/Filename},
+is the current directory, followed by {Filename}$install/resource/modules{/Filename},
 followed by {Filename}~/lib/rs/modules{/Filename}.{/footnote}.

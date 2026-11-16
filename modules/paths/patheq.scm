@@ -17,8 +17,8 @@
 ;; fails sometimes, too
 ;;
 ;;  e.g.,
-;;     (equal? (string->file "[resource]/../foo.data")
-;;             (string->file "[install]/foo.data"))     ==> #f
+;;     (equal? (string->file "$resource/../foo.data")
+;;             (string->file "$install/foo.data"))     ==> #f
 ;;
 
 (define-method equal? ((x <file-name>) (y <file-name>))

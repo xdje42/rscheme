@@ -15,8 +15,8 @@
 
 (define $system-root #f)    ;; /
 (define $user-root #f)      ;; ~
-(define $install-root #f)   ;; [install]
-(define $resource-root #f)  ;; [resource]
+(define $install-root #f)   ;; $install
+(define $resource-root #f)  ;; $resource
 
 (%early-once-only
  (set! $system-root (make <root-dir> 
@@ -26,10 +26,10 @@
 			root-name: "~/"
 			expanded-name: "~/"))
  (set! $install-root (make <root-dir> 
-			   root-name: "[install]/"
+			   root-name: "$install/"
 			   expanded-name: "/usr/local/rs/"))
  (set! $resource-root (make <root-dir> 
-			    root-name: "[resource]/"
+			    root-name: "$resource/"
 			    expanded-name: "/usr/local/rs/resource/")))
 
 (let ((h (getenv "HOME")))
@@ -54,8 +54,8 @@
   (set! *special-roots* (cons (cons entry r) *special-roots*)))
 
 (%early-once-only
- (add-special-root! "[resource]" $resource-root)
- (add-special-root! "[install]" $install-root)
+ (add-special-root! "$resource" $resource-root)
+ (add-special-root! "$install" $install-root)
  (add-special-root! "~" $user-root)
  (add-special-root! "" $system-root))
 

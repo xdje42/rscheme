@@ -61,7 +61,7 @@ int n;
 	return temp;
     }
 
-  /* look in [install]/resource/system.img */
+  /* look in $install/resource/system.img */
 
   strcpy( temp, rs_install_dir );
   strcat( temp, "/resource/system.img" );

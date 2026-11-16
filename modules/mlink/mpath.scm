@@ -22,7 +22,7 @@
 
 (%early-once-only
 (define *default-module-search-path*
-  (map string->dir '("~/lib/rs/modules" "[resource]/modules"))))
+  (map string->dir '("~/lib/rs/modules" "$resource/modules"))))
 
 (define (init-module-search-path)
   (let ((p (getenv "RS_MODULE_PATH")))

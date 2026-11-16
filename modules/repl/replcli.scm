@@ -183,7 +183,7 @@
 (%early-once-only
  (define *rc-files*
    (vector (string->file "~/.R7.scm")
-	   (string->file "[resource]/R7.scm")))) ;; [install]/resource
+	   (string->file "$resource/R7.scm")))) ;; $install/resource
 
 (define (load-rc-files envt)
   (let (((n <fixnum>) (vector-length *rc-files*)))

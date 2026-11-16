@@ -99,7 +99,6 @@
   (process-exit 1))
 
 (define (main args)
-  ;;
   (for-each (lambda (h)
 	      (format #f "                 (v0.7, ~a)\n" h))
 	    *history*)

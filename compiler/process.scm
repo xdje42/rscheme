@@ -12,7 +12,6 @@
  |
  `------------------------------------------------------------------------|#
 
-
 ;; this is called when we are re-awakened from a saved image
 
 (define random-delta 0)
@@ -57,7 +56,6 @@
 ;;;  In cross-compiling mode, we don't interpret system configuration
 ;;;  settings of the underlying system as applying to the target
 ;;;  environment (e.g., the install directory)
-;;;
 
 (define *native-mode* #f)
 
@@ -73,14 +71,13 @@
       (set! *dist-install-resource-dir*
 	    (string->dir (string-append (getenv "RS_INSTALL_DIR")
 					"/resource"))))
-  (add-special-root! "[dist]"
+  (add-special-root! "$dist"
 		     (make <root-dir>
-			   root-name: "[dist]/"
+			   root-name: "$dist/"
 			   expanded-name: (pathname->string *dist-path*))))
 
 ;; this is called when we get arguments
 ;; (but it is NOT called when we don't get arguments)
-
 
 (define (process-cmd-line args)
   (if (null? args)

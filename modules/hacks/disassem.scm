@@ -107,7 +107,7 @@
       (begin
 	(set! *tried-loading-disassembly-info* #t)
 	(load-disassembly-table 
-	  (string->dir "[resource]/compiler/bytecode")))))
+	  (string->dir "$resource/compiler/bytecode")))))
 
 ;;;  set up some handlers for disassembling additional info
 ;;;  about an instruction

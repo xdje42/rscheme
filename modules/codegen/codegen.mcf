@@ -15,6 +15,8 @@
  (open compiler corelib mlink)
  (files genaml rearrnge parassmt loops)
  (files lexaddr aml2tmpl)
- (files "[dist]/install/resource/compiler/bytecode/bcgen.scm")
+ ;; N.B. This $dist is not the same as the $dist above.
+ ;; This is a special root, the above is handled by string->dist-dir.
+ (files "$dist/install/resource/compiler/bytecode/bcgen.scm")
  (files aml2bc support)
  (export :local))
