@@ -15,3 +15,5 @@ AC_CHECK_MEMBER(struct gdIOCtx.free,
 ])
 
 AC_CONFIG_HEADERS([config.h])
+
+AC_OUTPUT
