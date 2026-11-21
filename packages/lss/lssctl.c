@@ -10,7 +10,9 @@
 
 #include <rscheme/pkgs/lss/lss.h>
 #include <rscheme/pkgs/lss/lsserrno.h>
+
 #include "alloc.h"
+#include "lsspriv.h"
 #include "timebase/timebase.h"
 
 static zip_algorithm *use_zip = NULL;

@@ -61,3 +61,4 @@ LSS *lssv3_extend( const char *file, int filemode,
 
 UINT_32 lssi_hash( UINT_32 key ); /* a CRC-based hash */
 
+void low_level_dump( const char *file );
