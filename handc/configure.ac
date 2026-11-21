@@ -722,7 +722,8 @@ then CFLAGS="$CFLAGS -Wall -Wno-unused"
      if $ASSERTIONS
      then echo "#define USE_CONSTRUCTOR_EXPRS" >> $CONFIG_H
      fi
-     echo "#define _rs_volatile volatile" >> $CONFIG_H
+     # TODO: Delete _rs_volatile entirely.
+     echo "#define _rs_volatile /* empty */" >> $CONFIG_H
      echo "#define _rs_inline inline" >> $CONFIG_H
      echo "#define _rs_noreturn __attribute__((__noreturn__))" >> $CONFIG_H
 else echo "#define _rs_volatile /* empty */" >> $CONFIG_H
