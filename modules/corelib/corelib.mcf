@@ -31,6 +31,7 @@
  (files linkinfo keywords)
  (files complex rational basicnum)
  (files delegate)
+ (files debug)
  (export :local)
  ;;
  ;; bindings we are re-exporting from precore...
