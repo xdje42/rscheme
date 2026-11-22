@@ -122,9 +122,10 @@ obj os_type( void )
   return cis( "dos", NIL_OBJ );
 }
 
-obj os_getwd( void )
+char *os_getwd( void )
 {
-  scheme_error( "os_getwd: not implemented", 0 );
+  /* minimal implementation */
+  return strdup(".");
 }
 
 void os_setwd( const char *path )
@@ -132,7 +133,21 @@ void os_setwd( const char *path )
   scheme_error( "os_setwd: not implemented", 0 );
 }
 
+char *os_realpath( const char *path )
+{
+  // TODO: This can be written to use os_getwd(), but there is currently no
+  // means to test it. Waiting for someone with a usable system.
+  fprintf(stderr, "os_realpath(): not implemented");
+  abort();
+}
 
+char *os_binary_path( const char *argv0 )
+{
+  // TODO: This can be written to use os_realpath(), but there is currently no
+  // means to test it. Waiting for someone with a usable system.
+  fprintf(stderr, "os_binary_path(): not implemented");
+  abort();
+}
 
 #define BEGIN_CRITICAL() do { /* what to do..? */
 #define END_CRITICAL()  } while (0)

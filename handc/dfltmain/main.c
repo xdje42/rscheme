@@ -51,6 +51,8 @@ Options:\n\
 
 const char *find_system_image( const char *arg0, const char *dflt );
 
+// Note: `rs_install_dir' must be assigned first.
+
 int rscheme_std_main( int argc, const char **argv, 
 		      struct module_descr **modules,
 		      const char *default_image )

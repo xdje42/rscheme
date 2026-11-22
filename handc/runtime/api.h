@@ -108,6 +108,6 @@ obj call_scheme( obj closure, unsigned num_args, ... );
  *    be initialized by the client before calling rscheme_std_main()
  */
 
-extern char *rs_install_dir;
+extern const char *rs_install_dir;
 
 #endif /* _H_RSCHEME_API */

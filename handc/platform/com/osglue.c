@@ -53,6 +53,10 @@ extern "C" {
 #include <rscheme/profile.h>
 #include <rscheme/runtime.h>
 
+#ifndef MAXPATHLEN
+#define MAXPATHLEN (1024+1)
+#endif
+
 static void fprintsi( FILE *f, struct RSSIG_info *rssig );
 
 /*
@@ -464,62 +468,33 @@ obj os_type( void )
 }
 
 #if HAVE_GETCWD
-obj os_getwd( void )
+char *os_getwd( void )
 {
-  char temp[1024];
-
-  if (getcwd( temp, 1024 ))
-    {
-      return make_string(temp);
-    }
-  else if (errno == ERANGE)
-    {
-      /* the real path is too big to fit in our tiny array */
-      char *p = (char *)getcwd( NULL, 0 );
-      obj r;
-      r = make_string(p);
-      free(p);
-      return r;
-    }
-  else
-    {
-      os_error( "getcwd", 0 );
-      return FALSE_OBJ;
-    }
+  char *p = (char *)getcwd( NULL, 0 );
+  if (p)
+    return p;
+  os_error( "getcwd", 0 );
+  return NULL;
 }
 #else
 #if HAVE_GETWD
 
-#ifndef MAXPATHLEN
-#define MAXPATHLEN (1024+1)
-#endif
-
-obj os_getwd( void )
+char *os_getwd( void )
 {
   char temp[MAXPATHLEN];
-
   if (getwd( temp ))
-    {
-      return make_string(temp);
-    }
-  else
-    {
-      os_error( "getcwd", 0 );
-      return FALSE_OBJ;
-    }
+    return strdup( temp );
+  os_error( "getcwd", 0 );
+  return NULL;
 }
 #else
-obj os_getwd( void )
+char *os_getwd( void )
 {
   /* minimal implementation */
-  return make_string( "." );
+  return strdup(".");
 }
 #endif /* HAVE_GETWD */
 #endif /* HAVE_GETCWD */
-
-/* change the current working directory,
-   or signal an error on failure 
-*/
 
 void os_setwd( const char *path )
 {
@@ -529,6 +504,64 @@ void os_setwd( const char *path )
 #else
   errno = ENOSYS;
   os_error( "chdir", 1, make_string(path) );
+#endif
+}
+
+char *os_realpath( const char *path )
+{
+#if HAVE_REALPATH
+  return realpath(path, NULL);
+#else
+  if (path[0] == '/')
+    return strdup(path);
+  char *wd = os_getwd();
+  char *abs_path = malloc(strlen(wd) + strlen(path) + 2);
+  sprintf(abs_path, "%s/%s", wd, path);
+  free(wd);
+  return abs_path;
+#endif
+}
+
+char *os_binary_path( const char *argv0 )
+{
+#ifdef __linux__
+  char self[MAXPATHLEN + 1];
+  int nchar = readlink( "/proc/self/exe", self, MAXPATHLEN );
+  if (nchar < 0 || nchar > MAXPATHLEN)
+    return NULL;
+  self[nchar] = '\0';
+  return strdup( self );
+#else
+  if (strchr( argv0, '/' ) != NULL)
+    return os_realpath(argv0);
+
+  // We have to do it the hard way, search $PATH for the program.
+  const char *p = os_getenv("PATH");
+  const char *name = argv0;
+  char temp[MAXPATHLEN];
+  while (p)
+    {
+      struct stat sb;
+      char *x = strchr( p, ':' );
+      if (x)
+	{
+	  memcpy( temp, p, x-p );
+	  temp[x-p] = 0;
+	  p = x+1;
+	}
+      else
+	{
+	  strcpy( temp, p );
+	  p = NULL;
+	}
+      if (temp[strlen(temp)-1] != '/')
+	strcat( temp, "/" );
+      strcat( temp, name );
+      if (stat( temp, &sb ) == 0)
+	return strdup( temp );
+    }
+  // We didn't find the program in $PATH, return argv0 as-is.
+  return strdup( argv0 );
 #endif
 }
 

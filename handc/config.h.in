@@ -74,6 +74,7 @@
 #define HAVE_NDIR_H 0
 #define HAVE_NTOHL 0
 #define HAVE_NTOHS 0
+#define HAVE_REALPATH 0
 #define HAVE_SETITIMER 0
 #define HAVE_STAT 0
 #define HAVE_STRERROR 0

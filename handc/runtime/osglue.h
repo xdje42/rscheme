@@ -46,9 +46,12 @@ const char *os_getenv( const char *key );
 
 /* a minimal implementation can return "./",
    but see src/corelib/process.scm for caveats
+   space for the result is malloc'd
+   Note: This does not raise an error as it can be called during
+   initialization.
 */
 
-obj os_getwd( void );
+char *os_getwd( void );
 
 /* change the current working directory,
    or signal an error on failure 
@@ -56,6 +59,24 @@ obj os_getwd( void );
 */
 
 void os_setwd( const char *path );
+
+/* return the canonicalized absolute path
+   space for the result is malloc'd, caller must free
+   Note: This does not raise an error as it can be called during
+   initialization.
+   Note: If the OS doesn't have Posix realpath() then the result will be
+   absolute but won't necessarily be canonicalized.
+*/
+
+char *os_realpath( const char *path );
+
+/* return the absolute path of the executing program
+   space for the result is malloc'd, caller must free
+   Note: This does not raise an error as it can be called during
+   initialization.
+*/
+
+char *os_binary_path( const char *argv0 );
 
 /*  return YES or NO accordingly as whether the named
     file exists 

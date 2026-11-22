@@ -282,7 +282,7 @@ AC_CHECK_MEMBER(struct timeval.tv_usec,
 #include <sys/time.h>
 #endif])
 
-AC_CHECK_FUNCS(getcwd getenv gettimeofday getwd \
+AC_CHECK_FUNCS(getcwd getenv gettimeofday getwd realpath \
   memcpy memmove ntohl ntohs setitimer strerror \
   stat mkdir chdir wait waitpid flock lockf getrusage usleep symlink \
   fgetln alloca erand48 backtrace)

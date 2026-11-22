@@ -26,7 +26,7 @@
 #include "intrs.h"
 
 /* the place where RScheme is installed.  Assigned in shell.c. */
-char *rs_install_dir = NULL;
+const char *rs_install_dir = NULL;
 
 /*
  *  Go through the image we just loaded, find all
@@ -143,8 +143,15 @@ init_scheme(int argc, const char *argv[],
   /* boot_args is #defined in scheme.h to be rscheme_global[1] */
   boot_args = make_string_list(argc, argv);
 
-  install_dir = make_string(rs_install_dir ? rs_install_dir : "install");
+  {
+    const char *c_install_dir = rs_install_dir ? rs_install_dir : "install";
+    if (verbose)
+      printf("Setting install-dir to %s\n", c_install_dir);
+    install_dir = make_string(c_install_dir);
+  }
+
   rs_init_c_signals();
+
   {
     obj start = gvec_read(boot_image, SLOT(2));
     /* caller might need regs, so switch them back */

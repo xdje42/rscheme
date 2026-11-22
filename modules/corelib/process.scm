@@ -103,7 +103,11 @@ unsigned i;
 
 (define-glue (os-getwd)
 {
-   REG0 = os_getwd();
+   char *wd = os_getwd();
+   if (wd == NULL)
+     os_error( "os_getwd", 0 );
+   REG0 = make_string( wd );
+   free( wd );
    RETURN1();
 })
 

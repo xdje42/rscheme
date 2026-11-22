@@ -182,7 +182,7 @@ obj os_type( void )
   return cis( "mac", NIL_OBJ );
 }
 
-obj os_getwd( void )
+char *os_getwd( void )
 {
   char *p, temp[1000];
   
@@ -204,7 +204,7 @@ obj os_getwd( void )
   if (p[-1] == '/')
     p[-1] = 0;
 
-  return make_string( temp );
+  return strdup( temp );
 }
 
 /* change the current working directory,
@@ -219,7 +219,21 @@ void os_setwd( const char *path )
     scheme_error( "os_setwd(~s) failed", 1, make_string(path) );
 }
 
+char *os_realpath( const char *path )
+{
+  // TODO: This can be written to use os_getwd(), but there is currently no
+  // means to test it. Waiting for someone with a usable system.
+  fprintf(stderr, "os_realpath(): not implemented");
+  abort();
+}
 
+char *os_binary_path( const char *argv0 )
+{
+  // TODO: This can be written to use os_realpath(), but there is currently no
+  // means to test it. Waiting for someone with a usable system.
+  fprintf(stderr, "os_binary_path(): not implemented");
+  abort();
+}
 
 #define BEGIN_CRITICAL() do { /* what to do..? */
 #define END_CRITICAL()  } while (0)
