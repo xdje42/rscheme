@@ -72,17 +72,6 @@
 		(append-dirs in-dir d)))
 	(append-dirs in-dir d))))
 
-;;
-;;  mkdirs or mkdir -p functionality
-;;
-
-(define (ensure-directory (dir <directory-name>))
-  (if (file-exists? (pathname->string dir))
-      dir
-      (begin
-	(ensure-directory (append-dirs dir (string->dir "..")))
-	(mkdir (pathname->string dir)))))
-
 ;; these are like the "...-file" variants, but take a <file-name>
 ;; and create the directory if necessary
 

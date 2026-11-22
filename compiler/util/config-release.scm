@@ -150,15 +150,3 @@
   (call-with-output-path 
       (append-path *dist-path* (string->file dest))
     proc))
-
-(define (join seperator list)
-  (if (null? list)
-      ""
-      (let ((l (make-seq)))
-	(seq-add! l (car list))
-	(for-each (lambda (item)
-		    (seq-add! l seperator)
-		    (seq-add! l item))
-		  (cdr list))
-	(apply string-append (seq->list l)))))
-

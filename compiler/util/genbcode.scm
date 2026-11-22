@@ -91,7 +91,6 @@
        "bci/bcojump.ci" "bco" *num-opcodes* 254 ", &&bco__254, &&bco__255\n")
       (write-byte-code-jump-table 
        "bci/bcpjump.ci" "bcp" *num-primops* 256 "")))
-
     
 (define *num-opcodes* 0)
 (define *opcode-table* '())
@@ -159,7 +158,6 @@
    (reverse *primop-table*))
   (format *frags* "\n}\n"))
 
-
 ;; returns the stem name for the eval stack union member that
 ;; contains these kinds of primtypes
 
@@ -176,22 +174,6 @@
     (set! *opcode-table* (cons descrip *opcode-table*))
     (set! *num-opcodes* (+ i 1))
     i))
-
-(define (item->str h)
-  (if (symbol? h)
-      (symbol->string h)
-      (if (string? h)
-	  h
-	  (object->string h))))
-
-(define (comma-sep lst)
-    (if (null? lst)
-	""
-	(if (null? (cdr lst))
-	    (item->str (car lst))
-	    (string-append (item->str (car lst))
-	    	           ","
-			   (comma-sep (cdr lst))))))
 
 (define *code-generator* (current-output-port))
 (define *frags* (current-output-port))
