@@ -10,7 +10,7 @@
  |
  `------------------------------------------------------------------------|#
 
-((sort "$dist/sort" "$install/resource/modules")
+((sort "$dest/sort" "$image")
  (open primops *scheme* iolib low-scheme objsys mathlib high-scheme)
  (open corelib)
  (files sort)

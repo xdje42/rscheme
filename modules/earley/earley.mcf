@@ -12,7 +12,7 @@
  |
  `------------------------------------------------------------------------|#
 
-((earley "$dist/earley" "$install/resource/modules")
+((earley "$dest/earley" "$image")
  ;;
  (open primops *scheme* tables low-scheme objsys mathlib corelib)
  ;;

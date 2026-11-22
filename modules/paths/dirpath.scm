@@ -62,11 +62,28 @@
 	(append-dirs p (current-directory))
 	(error "current-absolute-directory: absolute path not known"))))
 
+;; Convert a directory name to a string, leaving special directories alone.
 (define-method pathname->string ((p <directory-name>))
   (dir->string p "/" root-name))
 
+;; Convert a directory name to a string, expanding special directories.
 (define-method pathname->os-path ((self <directory-name>))
   (dir->string self "" expanded-name))
+
+;; Return directory with special directories expanded.
+(define (dir->os-dir (dir <directory-name>))
+  (cond ((not (rooted-at dir)) dir)
+	((string=? (root-name (rooted-at dir)) "/") dir)
+	(else
+	 (let ((raw-expanded-root (parse-dname (expanded-name
+						(rooted-at dir)))))
+	   (if (string=? (car raw-expanded-root) "")
+	       (make <directory-name>
+		 rooted-at: $system-root
+		 steps: (append (cdr raw-expanded-root) (steps dir)))
+	       (make <directory-name>
+		 rooted-at: #f
+		 steps: (append raw-expanded-root (steps dir))))))))
 
 (define (up->dot-dot item)
   (if (eq? item 'up)
@@ -103,6 +120,8 @@
 (define (string->dir str)
   (steps->dir (parse-dname str)))
 
+;; Convert a directory (represented as a list of strings) to a
+;; <directory-name> object.
 (define (steps->dir steps)
   (bind ((r s (simplify steps)))
     (if (and (null? s) (not r))

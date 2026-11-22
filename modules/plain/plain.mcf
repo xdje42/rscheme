@@ -10,7 +10,7 @@
  |
  `------------------------------------------------------------------------|#
 
-((plain "$dist/plain" "$install/resource/modules")
+((plain "$dest/plain" "$image")
  (open primops *scheme*)
  (files classes stdio start)
  (export start 

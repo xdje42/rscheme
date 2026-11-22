@@ -38,6 +38,7 @@
 (define-method pathname->os-path ((self <string>))
   self)
 
+;; Convert a file path to a string, expanding special directories.
 (define-method pathname->os-path ((self <file-name>))
   (let ((x (extension self))
 	(d (file-directory self)))

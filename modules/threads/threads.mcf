@@ -13,8 +13,7 @@
 
 
 
-((threads "$dist/threads"
-          "$install/resource/modules")
+((threads "$dest/threads" "$image")
  (open primops *scheme* iolib low-scheme objsys mathlib tables high-scheme)
  (open corelib)
 

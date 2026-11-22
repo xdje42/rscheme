@@ -13,7 +13,7 @@
 
 
 
-((repl "$dist/repl" "$install/resource/modules")
+((repl "$dest/repl" "$image")
  (open  primops *scheme* iolib low-scheme objsys mathlib tables high-scheme)
  (open compiler codegen editinp paths mlink start sort)
  (open corelib)

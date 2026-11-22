@@ -71,10 +71,17 @@
       (set! *dist-install-resource-dir*
 	    (string->dir (string-append (getenv "RS_INSTALL_DIR")
 					"/resource"))))
-  (add-special-root! "$dist"
+  (add-special-root! "$dest"
 		     (make <root-dir>
-			   root-name: "$dist/"
-			   expanded-name: (pathname->string *dist-path*))))
+			   root-name: "$dest/"
+			   expanded-name: (pathname->string *dist-path*)))
+  (add-special-root! "$image"
+		     (make <root-dir>
+			   root-name: "$image/"
+			   expanded-name: (pathname->string
+					   (append-dirs
+					    *dist-path*
+					    (string->dir "install/resource/modules"))))))
 
 ;; this is called when we get arguments
 ;; (but it is NOT called when we don't get arguments)
@@ -112,8 +119,7 @@
 	(string=? sw "-o.noconf"))
     (let ((target (car cdr-args)))
       (if (string=? target "-")
-	  (set! target (pathname->string
-			(install-resource-path "system.img"))))
+	  (set! target "$install/resource/system.img"))
       (set! *modules* (append *modules* (map string->symbol (cdr cdr-args))))
       (format #t "building: ~s\n" target)
       (format #t "modules: ~s\n" *modules*)

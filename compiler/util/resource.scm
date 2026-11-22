@@ -12,7 +12,6 @@
  |
  `------------------------------------------------------------------------|#
 
-
 ;; a source resource is a resource found in 
 ;; the SOURCE's resource search path
 ;; (that is, either in $SOURCE/resource or in $SOURCE/dist/install/resource)
@@ -38,7 +37,6 @@
 		p
 		(loop (cdr i))))))))
 
-
 ;; return the pathname to a resource that is to be placed
 ;; in the distribution, and is intended to be installed
 
@@ -50,27 +48,6 @@
 
 (define (distribution-resource-path rsrc-path)
   (append-path *dist-resource-dir* (string->file rsrc-path)))
-
-
-(define (string->dist-dir in-dir str)
-  (let* ((d (string->dir str))
-	 (steps (gvec-ref d 1))
-	 (h (if (null? steps)
-		#f
-		(car steps))))
-    (if (string? h)
-	(if (string=? h "$install")
-	    (begin
-	      (gvec-set! d 1 (cdr (gvec-ref d 1)))
-	      (append-dirs (append-dirs *dist-path* 
-					(string->dir "install"))
-			   d))
-	    (if (string=? h "$dist")
-		(begin
-		  (gvec-set! d 1 (cdr (gvec-ref d 1)))
-		  (append-dirs *dist-path* d))
-		(append-dirs in-dir d)))
-	(append-dirs in-dir d))))
 
 ;; these are like the "...-file" variants, but take a <file-name>
 ;; and create the directory if necessary

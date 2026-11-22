@@ -14,19 +14,23 @@
  `------------------------------------------------------------------------|#
 
 (define-class <file-name> (<object>)
-    file-directory
-    filename
-    extension)
+    file-directory ;; #f or a <directory-name> object
+    filename       ;; base file name
+    extension)     ;; string
 
 (define-class <directory-name> (<object>)
     rooted-at
     steps)
 
+;; TODO: Would it be a simplification to store expanded-name as steps?
 (define-class <root-dir> (<object>)
-    root-name
-    expanded-name)
+    root-name      ;; Eg, "$install/"
+    expanded-name) ;; Eg, "/usr/local/rs/", always has a trailing "/"
 
 (define (root-dir? x)
     (instance? x <root-dir>))
 
 (define-generic-function pathname->string)
+
+;; TODO: generic pathname->os-path ?
+;; TODO: generic relative-file ?

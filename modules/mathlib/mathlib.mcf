@@ -10,7 +10,7 @@
  |
  `------------------------------------------------------------------------|#
 
-((mathlib "$dist/mathlib" "$install/resource/modules")
+((mathlib "$dest/mathlib" "$image")
  (open low-scheme primops corelib *scheme*)
  (require-c-header "<stdlib.h>")
  (require-c-header "<rscheme/hashfn.h>")

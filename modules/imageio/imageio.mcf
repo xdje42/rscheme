@@ -10,9 +10,7 @@
  |
  `------------------------------------------------------------------------|#
 
-((imageio
-	"$dist/imageio"
-	"$install/resource/modules")
+((imageio "$dest/imageio" "$image")
 
  (require-c-header "<string.h>")
 

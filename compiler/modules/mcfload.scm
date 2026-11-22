@@ -53,13 +53,13 @@
 		    '&module
 		    actual-file
 		    (or *target-dest-dir*
-                        (string->dist-dir
+			(append-dirs
                          (file-directory actual-file)
-                         (cadar form)))
+                         (dir->os-dir (string->dir (cadar form)))))
 		    (or *target-image-dir*
-                        (string->dist-dir
+                        (append-dirs
                          (file-directory actual-file)
-                         (caddar form)))
+                         (dir->os-dir (string->dir (caddar form)))))
 		    (list (cons '&module (cdr form)))
 		    interp-mcf))
 
@@ -163,7 +163,7 @@
 		     extension: "mif"
 		     file-directory: (image-dest-dir bcx))))
 	(let ((fn (pathname->os-path f)))
-	  (if (> (string-length fn) 63)
+	  (if (and (not *tl-report*) (> (string-length fn) 63))
 	      (format #t "saving mif: ~a...~a\n" 
 		      (substring fn 0 30)
 		      (substring fn (- (string-length fn) 30)))

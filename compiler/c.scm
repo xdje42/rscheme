@@ -67,8 +67,6 @@
 (add-mifio-class "<substitution>" <substitution>)
 (add-mifio-class "<compile-point>" <compile-point>)
 
-
-
 ;;----------------------------------------------------------------
 
 ;; collect initialization procedures all together
@@ -97,6 +95,13 @@
 (load "../modules/codegen/parassmt.scm")
 
 ;;----------------------------------------------------------------
+;; Random files that contain new or modified code not in bootstrap compiler
+
+(load "../modules/paths/parse.scm")
+(load "../modules/paths/dirpath.scm")
+(load "../modules/paths/rootpath.scm")
+
+;;----------------------------------------------------------------
 ;; C-code generation
 
 (load "cgen/assem.scm")
@@ -109,7 +114,6 @@
 
 (define *current-module* #f)
 (define *build-context* #f)
-
 
 ;;; note:  using the bytecode strategy causes an additional
 ;;;        word in the template to appear after the code-properties

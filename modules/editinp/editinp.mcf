@@ -10,7 +10,7 @@
  |
  `------------------------------------------------------------------------|#
 
-((editinp "$dist/editinp" "$install/resource/modules")
+((editinp "$dest/editinp" "$image")
  (open  primops *scheme* iolib low-scheme objsys mathlib tables high-scheme)
  (open corelib)
  (require-c-header "<rscheme/rdln.h>")

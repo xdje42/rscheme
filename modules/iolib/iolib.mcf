@@ -11,8 +11,7 @@
  | Purpose: I/O Library Module Control File (MCF)
  `------------------------------------------------------------------------|#
 
-((iolib "$dist/iolib" 
-	"$install/resource/modules")
+((iolib "$dest/iolib" "$image")
  (open primops *scheme* tables low-scheme objsys mathlib corelib paths
        earley)
 

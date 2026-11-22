@@ -16,8 +16,26 @@
  |      completely rewritten 1995.07.18
  `------------------------------------------------------------------------|#
 
+;; Temporary implementation of SRFI-1's filter function.
+;; This uses the %foo naming convention for local functions.
+(define (%filter pred lst)
+  (cond ((null? lst) '())
+        ((pred (car lst))
+         (cons (car lst) (%filter pred (cdr lst))))
+        (else
+         (%filter pred (cdr lst)))))
+
+;; TODO: Should this return () instead of ("") for ""?
+;; Note: This returns the same result for "foo" and "foo/".
 (define (parse-dname dname)
-  (string-split dname #\/))
+  (cond ((string=? dname "/") '("")) ;; "" == $system-root
+	((string=? dname "") '())
+	(else
+	 (let ((split (%filter (lambda (x) (not (string=? x "")))
+			       (string-split dname #\/))))
+	   (if (eq? (string-ref dname 0) #\/)
+	       (cons "" split)
+	       split)))))
 
 (define (parse-fname fname)
   (let* ((elems (string-split fname #\/))

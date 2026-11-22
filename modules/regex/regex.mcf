@@ -13,9 +13,7 @@
  | Purpose:          The Regex Library Module Desription
  `------------------------------------------------------------------------|#
 
-((regex
-	"$dist/regex" 
-	"$install/resource/modules")
+((regex "$dest/regex" "$image")
  (open primops *scheme* iolib low-scheme objsys mathlib high-scheme)
  (open corelib tables)
 

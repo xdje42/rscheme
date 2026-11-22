@@ -41,7 +41,10 @@
   (set-expanded-name! $resource-root (string-append inst "/resource/")))
 
 (define-method pathname->string ((self <root-dir>))
-    (root-name self))
+  (root-name self))
+
+(define-method pathname->os-path ((self <root-dir>))
+  (expanded-name self))
 
 ;;
 
